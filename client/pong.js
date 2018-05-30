@@ -21,9 +21,6 @@ export class App extends BaseApp {
         super.registerControl({ name: "P2_MOVE_UP" });
         super.registerControl({ name: "P2_MOVE_DOWN" });
 
-        this._keyboard = new Keyboard();
-        this._keyboard.load();
-
         let mainContainer = document.createElement("div");
         mainContainer.innerHTML = ""
             + "<div>P1 UP:   <span id='P1_MOVE_UP_control'>&nbsp;</span><div>"

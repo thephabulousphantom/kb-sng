@@ -28,6 +28,9 @@ export default class App {
 
         Input.activated.on(this.onInputActivated.bind(this));
         Input.deactivated.on(this.onInputDeactivated.bind(this));
+
+        this._keyboard = new Keyboard();
+        this._keyboard.load();
     }
 
     registerControl(control) {
