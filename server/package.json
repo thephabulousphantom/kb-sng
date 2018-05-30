@@ -1,0 +1,20 @@
+{
+  "name": "jsng-pong-server",
+  "version": "1.0.0",
+  "description": "JavaScript Engine Pong Server",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "The Phabulous Phantom",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^1.30.0",
+    "express": "^4.16.3",
+    "http-shutdown": "^1.2.0",
+    "minimist": "^1.2.0",
+    "node-gameloop": "^0.1.4",
+    "winston": "^2.4.1",
+    "ws": "^5.1.0"
+  }
+}

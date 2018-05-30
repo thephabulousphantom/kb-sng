@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "program": "${workspaceRoot}/server/main.js",
+            "env": {
+                "NODE_CONFIG_DIR": "./server/config"
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Client",
+            "url": "http://localhost:8080/client/index.html",
+            "webRoot": "${workspaceRoot}"
+
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch both Client and Server",
+            "configurations": ["Launch Server", "Launch Client"]
+        }
+    ]
+}
