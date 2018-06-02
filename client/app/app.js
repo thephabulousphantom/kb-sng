@@ -1,9 +1,10 @@
 import log from "./log.js";
-import OnOff from "./onoff.js";
-import Driver from "./driver/driver.js";
-import Input from "./driver/input/input.js";
-import ControlActivated from "./command/controlActivated.js";
-import ControlDeactivated from "./command/controlDeactivated.js";
+import OnOff from "./onOff.js";
+import Driver from "../driver/driver.js";
+import Input from "../driver/input/input.js";
+import Keyboard from "../driver/input/keyboard.js";
+import ControlActivated from "../command/controlActivated.js";
+import ControlDeactivated from "../command/controlDeactivated.js";
 
 export default class App {
 

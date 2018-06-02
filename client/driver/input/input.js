@@ -1,5 +1,5 @@
 import Driver from "../driver.js";
-import OnOff from "../../onoff.js";
+import OnOff from "../../app/onOff.js";
 
 export default class Input extends Driver {
 

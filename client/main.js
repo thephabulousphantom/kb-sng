@@ -1,4 +1,4 @@
-import * as Pong from "./pong.js"
+import * as Pong from "./pong/pong.js"
 
-let app = new Pong.App();
+let app = new Pong.PongApp();
 app.run();

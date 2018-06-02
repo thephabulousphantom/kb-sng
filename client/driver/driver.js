@@ -1,4 +1,4 @@
-import OnOff from "../onoff.js";
+import OnOff from "../app/onOff.js";
 import AlreadyLoadedError from "../error/alreadyloaded.js";
 import NotLoadedError from "../error/notloaded.js";
 

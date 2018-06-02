@@ -1,9 +1,9 @@
-import log from "./log.js";
-import Keyboard from "./driver/input/keyboard.js";
-import BaseApp from "./app.js";
-import Command from "./command/command.js";
+import log from "../app/log.js";
+import App from "../app/app.js";
+import Keyboard from "../driver/input/keyboard.js";
+import Command from "../command/command.js";
 
-export class App extends BaseApp {
+export class PongApp extends App {
 
     constructor() {
 

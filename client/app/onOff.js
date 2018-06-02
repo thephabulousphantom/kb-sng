@@ -1,6 +1,6 @@
-import NotImplementedError from "./error/notimplemented.js";
-import AlreadyAddedError from "./error/alreadyadded.js";
-import CallbackMissingError from "./error/callbackmissing.js";
+import NotImplementedError from "../error/notImplemented.js";
+import AlreadyAddedError from "../error/alreadyAdded.js";
+import CallbackMissingError from "../error/callbackMissing.js";
 
 export default class OnOff {
 
