@@ -3,8 +3,8 @@ import OnOff from "./onOff.js";
 import Driver from "../driver/driver.js";
 import Input from "../driver/input/input.js";
 import Keyboard from "../driver/input/keyboard.js";
-import ControlActivated from "../command/controlActivated.js";
-import ControlDeactivated from "../command/controlDeactivated.js";
+import ActivateControl from "../command/activateControl.js";
+import DeactivateControl from "../command/deactivateControl.js";
 
 export default class App {
 
@@ -60,7 +60,7 @@ export default class App {
             return;
         }
 
-        this.enqueueCommand(new ControlActivated(control));
+        this.enqueueCommand(new ActivateControl(control));
     }
 
     onInputDeactivated(data) {
@@ -73,7 +73,7 @@ export default class App {
             return;
         }
 
-        this.enqueueCommand(new ControlDeactivated(control));
+        this.enqueueCommand(new DeactivateControl(control));
     }
 
     translate(input) {
@@ -132,7 +132,7 @@ export default class App {
 
         switch (command.name) {
 
-            case "ControlActivated":
+            case "ActivateControl":
                 {
                     let controlBefore = this.controls[command.control.name];
                     this.controls[command.control.name] = command.control;
@@ -145,7 +145,7 @@ export default class App {
                 }
                 break;
 
-            case "ControlDeactivated":
+            case "DeactivateControl":
                 {
                     let controlBefore = this.controls[command.control.name];
             

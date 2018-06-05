@@ -1,10 +1,11 @@
 import Command from "./command.js";
 
-export default class ControlActivated extends Command{
+export default class DeactivateControl extends Command {
 
     constructor(control) {
 
-        super("ControlActivated");
+        super("DeactivateControl");
+        
         this.control = control;
     }
 }
