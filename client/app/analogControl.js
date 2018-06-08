@@ -6,6 +6,6 @@ export default class AnalogControl extends Control {
 
         super(name, type);
         
-        this.value = value;
+        this.value = 1.0 * value;
     }
 }

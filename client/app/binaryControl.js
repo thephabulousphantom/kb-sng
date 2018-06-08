@@ -6,6 +6,6 @@ export default class BinaryControl extends Control {
 
         super(name, type)
         
-        this.value = value;
+        this.value = !!value;
     }
 }
