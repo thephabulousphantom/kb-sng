@@ -1,15 +1,15 @@
-import Control from "../../app/control.js";
+import BinaryControl from "../../app/binaryControl.js";
 
-export default class KeyControl extends Control {
+export default class KeyControl extends BinaryControl {
 
-    constructor(name, code) {
+    constructor(name, code, value = false) {
 
         if (name.length == 1) {
 
             name = name.toLocaleUpperCase();
         }
 
-        super(name, "Key");
+        super(name, "Key", value);
 
         this.code = code;
     }

@@ -1,33 +1,35 @@
-import AppControl from "../app/appControl.js";
+import Control from "../app/control.js";
+import BinaryControl from "../app/binaryControl.js";
+import AnalogControl from "../app/analogControl.js";
 
-export class PlayerLeftUpControl extends AppControl {
+export class PlayerLeftUpControl extends BinaryControl {
 
-    constructor() {
+    constructor(value) {
 
-        super("PlayerLeftUp");
+        super("PlayerLeftUp", "App", value);
     }
 }
 
-export class PlayerLeftDownControl extends AppControl {
+export class PlayerLeftDownControl extends BinaryControl {
 
-    constructor() {
+    constructor(value) {
 
-        super("PlayerLeftDown");
+        super("PlayerLeftDown", "App", value);
     }
 }
 
-export class PlayerRightUpControl extends AppControl {
+export class PlayerRightUpControl extends BinaryControl {
 
-    constructor() {
+    constructor(value) {
 
-        super("PlayerRightUp");
+        super("PlayerRightUp", "App", value);
     }
 }
 
-export class PlayerRightDownControl extends AppControl {
+export class PlayerRightDownControl extends BinaryControl {
 
-    constructor() {
+    constructor(value) {
 
-        super("PlayerRightDown");
+        super("PlayerRightDown", "App", value);
     }
 }

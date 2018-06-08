@@ -32,20 +32,20 @@ export class PongApp extends App {
         document.body.appendChild(mainContainer);
     }
 
-    translate(input) {
+    translate(control) {
 
-        if (input.type == "Key") {
+        if (control.type == "Key") {
 
-            switch (input.name) {
+            switch (control.name) {
 
-                case "W": return new Controls.PlayerLeftUpControl();
-                case "S": return new Controls.PlayerLeftDownControl();
-                case "I": return new Controls.PlayerRightUpControl();
-                case "K": return new Controls.PlayerRightDownControl();
+                case "W": return new Controls.PlayerLeftUpControl(control.value);
+                case "S": return new Controls.PlayerLeftDownControl(control.value);
+                case "I": return new Controls.PlayerRightUpControl(control.value);
+                case "K": return new Controls.PlayerRightDownControl(control.value);
             }
         }
 
-        return super.translate(input);
+        return super.translate(control);
     }
 
     processCommand(state, command) {
@@ -57,8 +57,8 @@ export class PongApp extends App {
 
         log.debug("control changed: " + JSON.stringify(data));
 
-        let controlSpan = document.getElementById(data.after.name + "_control");
-        controlSpan.innerHTML = data.after.active
+        let controlSpan = document.getElementById(data.name + "_control");
+        controlSpan.innerHTML = data.value
             ? "X"
             : "&nbsp;";
     }
@@ -66,5 +66,7 @@ export class PongApp extends App {
     processFrame() {
 
         let state = super.processFrame();
+
+        state.int("frame", this.frameNumber);
     }
 }

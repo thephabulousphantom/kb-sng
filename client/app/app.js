@@ -3,7 +3,6 @@ import OnOff from "./onOff.js";
 import Driver from "../driver/driver.js";
 import Input from "../driver/input/input.js";
 import Control from "./control.js";
-import AppControl from "./appControl.js";
 import Keyboard from "../driver/input/keyboard.js";
 import ModifyState from "../command/modifyState.js";
 import RegisterControl from "../command/registerControl.js";
@@ -35,17 +34,17 @@ import AlreadyRegisteredError from "../error/alreadyRegistered.js";
         Driver.loaded.on(this.onDriverLoaded);
         Driver.unloaded.on(this.onDriverUnloaded);
 
-        Input.activated.on(this.onInputActivated.bind(this));
-        Input.deactivated.on(this.onInputDeactivated.bind(this));
+        Input.activated.on(this.onInputChanged.bind(this));
+        Input.deactivated.on(this.onInputChanged.bind(this));
 
         this._keyboard = new Keyboard();
         this._keyboard.load();
     }
 
     /**
-     * Registers an app control.
+     * Registers a control for state tracking.
      * 
-     * @param control {AppControl} App control to register.
+     * @param control {Control} Control to register.
      */
     registerControl(control) {
 
@@ -63,39 +62,23 @@ import AlreadyRegisteredError from "../error/alreadyRegistered.js";
     }
 
     /**
-     * Input.activated event handler.
+     * Input.activated and Input.deactivated event handler.
      * 
-     * @param control {Control} Activated physical input control.
+     * @param control {Control} Input control that was changed.
      */
-    onInputActivated(control) {
+    onInputChanged(control) {
 
-        let appControl = this.translate(control);
-        if (!appControl) {
+        let state = this.currentState();
+        if (state.has(control.getStateKey())) {
 
-            return;
+            this.issueCommand(new ChangeControl(control));
         }
 
-        appControl.active = true;
-
-        this.issueCommand(new ChangeControl(appControl));
-    }
-
-    /**
-     * Input.deactivated event handler.
-     * 
-     * @param control {Control} Deactivated physical input control.
-     */
-    onInputDeactivated(control) {
-
         let appControl = this.translate(control);
-        if (!appControl) {
+        if (appControl && state.has(appControl.getStateKey())) {
 
-            return;
+            this.issueCommand(new ChangeControl(appControl));
         }
-
-        appControl.active = false;
-
-        this.issueCommand(new ChangeControl(appControl));
     }
 
     /**
@@ -160,11 +143,13 @@ import AlreadyRegisteredError from "../error/alreadyRegistered.js";
                         throw new AlreadyRegisteredError(`Application control ${key} already registered.`);
                     }
 
-                    state.object(key, command.control);
+                    state.set(key, command.control.value);
 
                     this.controlRegistered.raise({
                         state: state,
-                        control: command.control
+                        name: command.control.name,
+                        type: command.control.type,
+                        value: command.control.value
                     });
                 }
                 break;
@@ -172,26 +157,32 @@ import AlreadyRegisteredError from "../error/alreadyRegistered.js";
             case "ChangeControl":
                 {
                     let key = command.control.getStateKey();
-                    let controlStateBefore = state.get(key);
-                    let controlStateAfter = command.control;
+                    let oldValue = state.get(key);
 
-                    state.object(key, controlStateAfter);
+                    state.set(key, command.control.value);
 
                     this.controlChanged.raise({
                         state: state,
-                        before: controlStateBefore,
-                        after: controlStateAfter
+                        name: command.control.name,
+                        type: command.control.type,
+                        value: command.control.value,
+                        oldValue: oldValue
                     });
                 }
                 break;
         }
     }
 
-    processFrame() {
+    currentState() {
 
         return this.frames.process(
             this.frameNumber,
             this.processCommand.bind(this)
         );
+    }
+
+    processFrame() {
+
+        return this.currentState();
     }
 } 

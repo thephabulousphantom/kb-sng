@@ -26,11 +26,11 @@ export default class Keyboard extends Input {
 
     onKeyDown(evt) {
 
-        super.activate(new KeyControl(evt.key, evt.keyCode));
+        super.activate(new KeyControl(evt.key, evt.keyCode, true));
     }
 
     onKeyUp(evt) {
 
-        super.deactivate(new KeyControl(evt.key, evt.keyCode));
+        super.deactivate(new KeyControl(evt.key, evt.keyCode, false));
     }
 }

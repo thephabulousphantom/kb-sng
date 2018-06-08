@@ -1,12 +1,12 @@
 import Command from "./command.js";
-import AppControl from "../app/appControl.js";
+import Control from "../app/control.js";
 
 export default class RegisterControl extends Command {
 
     /**
      * Constructs RegisterControl command.
      * 
-     * @param control {AppControl} App control being registered.
+     * @param control {Control} Control being registered.
      */
     constructor(control) {
 
