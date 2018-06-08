@@ -2,20 +2,28 @@ import log from "./log.js";
 import OnOff from "./onOff.js";
 import Driver from "../driver/driver.js";
 import Input from "../driver/input/input.js";
+import Control from "./control.js";
+import AppControl from "./appControl.js";
 import Keyboard from "../driver/input/keyboard.js";
-import ActivateControl from "../command/activateControl.js";
-import DeactivateControl from "../command/deactivateControl.js";
+import ModifyState from "../command/modifyState.js";
+import RegisterControl from "../command/registerControl.js";
+import ChangeControl from "../command/changeControl.js";
+import State from "./frame.js";
+import Frame from "./frame.js";
+import FrameBuffer from "./frameBuffer.js";
+import AlreadyRegisteredError from "../error/alreadyRegistered.js";
 
-export default class App {
+ export default class App {
 
     constructor() {
 
         log.info("Constructing the app...");
 
         this.running = false;
-        this.controls = {};
-        this._commandBuffer = [];
+        this.controlRegistered = new OnOff("ControlRegistered");
         this.controlChanged = new OnOff("ControlChanged");
+        this.frames = new FrameBuffer();
+        this.frameNumber = 0;
         
         window.addEventListener("load", this.init.bind(this));
     }
@@ -34,10 +42,14 @@ export default class App {
         this._keyboard.load();
     }
 
+    /**
+     * Registers an app control.
+     * 
+     * @param control {AppControl} App control to register.
+     */
     registerControl(control) {
 
-        this.controls[control.name] = control;
-        this.controls[control.name].active = false;
+        this.issueCommand(new RegisterControl(control));
     }
 
     onDriverLoaded(data) {
@@ -50,50 +62,60 @@ export default class App {
         log.info(`Driver ${data.driver.name} driver unloaded.`);
     }
 
-    onInputActivated(data) {
+    /**
+     * Input.activated event handler.
+     * 
+     * @param control {Control} Activated physical input control.
+     */
+    onInputActivated(control) {
 
-        console.log(`Input ${data.name} activated.`);
-
-        let control = this.translate(data);
-        if (!control) {
-
-            return;
-        }
-
-        this.enqueueCommand(new ActivateControl(control));
-    }
-
-    onInputDeactivated(data) {
-
-        console.log(`Input ${data.name} deactivated.`);
-
-        let control = this.translate(data);
-        if (!control) {
+        let appControl = this.translate(control);
+        if (!appControl) {
 
             return;
         }
 
-        this.enqueueCommand(new DeactivateControl(control));
+        appControl.active = true;
+
+        this.issueCommand(new ChangeControl(appControl));
     }
 
-    translate(input) {
+    /**
+     * Input.deactivated event handler.
+     * 
+     * @param control {Control} Deactivated physical input control.
+     */
+    onInputDeactivated(control) {
+
+        let appControl = this.translate(control);
+        if (!appControl) {
+
+            return;
+        }
+
+        appControl.active = false;
+
+        this.issueCommand(new ChangeControl(appControl));
+    }
+
+    /**
+     * Translates a physical control into an app control.
+     * 
+     * @param control {Control} Physical control to translate.
+     */
+    translate(control) {
 
         return undefined;
     }
 
-    enqueueCommand(command) {
+    /**
+     * Issues a command at current frame number.
+     * 
+     * @param commmand {Command} Command to isssue.
+     */
+    issueCommand(command) {
 
-        this._commandBuffer.push(command);
-    }
-
-    commandBufferEmpty() {
-
-        return this._commandBuffer.length === 0;
-    }
-
-    dequeueCommand() {
-
-        return this._commandBuffer.shift();
+        this.frames.issueCommand(this.frameNumber, command);
     }
 
     run() {
@@ -113,48 +135,52 @@ export default class App {
 
     tick() {
 
-        while (!this.commandBufferEmpty()) {
-
-            this.processCommand(this.dequeueCommand());
-        }
-
-        this.processFrame();
-
         if (this.running) {
 
-            requestAnimationFrame(
-                this.tick.bind(this)
-            );
+            requestAnimationFrame(this.tick.bind(this));
         }
+
+        this.frameNumber++;
+        this.processFrame();
     }
 
-    processCommand(command) {
+    processCommand(state, command) {
 
         switch (command.name) {
 
-            case "ActivateControl":
-                {
-                    let controlBefore = this.controls[command.control.name];
-                    this.controls[command.control.name] = command.control;
-                    this.controls[command.control.name].active = true;
+            case "ModifyState":
+                state.set(command.key, command.value);
+                break;
 
-                    this.controlChanged.raise({
-                        before: controlBefore,
-                        after: this.controls[command.control.name]
+            case "RegisterControl":
+                {
+                    let key = command.control.getStateKey();
+                    if (state.has(key)) {
+
+                        throw new AlreadyRegisteredError(`Application control ${key} already registered.`);
+                    }
+
+                    state.object(key, command.control);
+
+                    this.controlRegistered.raise({
+                        state: state,
+                        control: command.control
                     });
                 }
                 break;
 
-            case "DeactivateControl":
+            case "ChangeControl":
                 {
-                    let controlBefore = this.controls[command.control.name];
-            
-                    this.controls[command.control.name] = command.control;
-                    this.controls[command.control.name].active = false;
+                    let key = command.control.getStateKey();
+                    let controlStateBefore = state.get(key);
+                    let controlStateAfter = command.control;
+
+                    state.object(key, controlStateAfter);
 
                     this.controlChanged.raise({
-                        before: controlBefore,
-                        after: this.controls[command.control.name]
+                        state: state,
+                        before: controlStateBefore,
+                        after: controlStateAfter
                     });
                 }
                 break;
@@ -163,5 +189,9 @@ export default class App {
 
     processFrame() {
 
+        return this.frames.process(
+            this.frameNumber,
+            this.processCommand.bind(this)
+        );
     }
-};
+} 

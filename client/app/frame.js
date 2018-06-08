@@ -1,3 +1,4 @@
+import State from "./state.js";
 import NotImplementedError from "../error/notImplemented.js";
 
 export default class Frame {
@@ -7,7 +8,7 @@ export default class Frame {
         this.frameNumber = previousFrame === null ? 0 : previousFrame.frameNumber + 1;
         this.commands = new Array();
         this.processed = false;
-        this.state = new Map();
+        this.state = new State();
         this.previousFrame = previousFrame;
     }
 
@@ -27,7 +28,7 @@ export default class Frame {
 
         if (this.previousFrame) {
 
-            this.state = new Map(this.previousFrame.state);
+            this.state = new State(this.previousFrame.state);
         }
 
         for (let i = 0; i < this.commands.length; i++) {

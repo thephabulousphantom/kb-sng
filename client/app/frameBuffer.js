@@ -9,25 +9,25 @@ export default class FrameBuffer {
 
         this.maxSize = maxSize;
         this.frames = new Array(this.maxSize);
-        this._indexOldest = 0;
-        this._indexNewest = 0;
         this.frames[0] = new Frame();
         this.size = 1;
+        this._indexOldest = 0;
+        this._indexNewest = 0;
     }
 
-    _getOldest() {
+    oldest() {
 
         return this.frames[this._indexOldest];
     }
 
-    _getNewest() {
+    newest() {
 
         return this.frames[this._indexNewest];
     }
 
     _add() {
 
-        let frame = new Frame(this._getNewest());
+        let frame = new Frame(this.newest());
         if (this.size < this.maxSize) {
 
             this._indexNewest = (this._indexNewest + 1) % this.maxSize;
@@ -37,7 +37,7 @@ export default class FrameBuffer {
 
             this._indexNewest = this._indexOldest;
             this._indexOldest = (this._indexOldest + 1) % this.maxSize;
-            this._getOldest().destroyPrevious();
+            this.oldest().destroyPrevious();
         }
 
         this.frames[this._indexNewest] = frame;
@@ -51,22 +51,22 @@ export default class FrameBuffer {
      */
     get(frameNumber) {
 
-        if (frameNumber < this._getOldest().frameNumber) {
+        if (frameNumber < this.oldest().frameNumber) {
 
-            throw new OutOfRangeError(`Can't retrieve frame ${frameNumber} older than the oldest buffered one (${this._getOldest().frameNumber}).`);
+            throw new OutOfRangeError(`Can't retrieve frame ${frameNumber} older than the oldest buffered one (${this.oldest().frameNumber}).`);
         }
 
-        if (frameNumber <= this._getNewest().frameNumber) {
+        if (frameNumber <= this.newest().frameNumber) {
 
-            return this.frames[(this._indexOldest + (frameNumber - this._getOldest().frameNumber)) % this.maxSize];
+            return this.frames[(this._indexOldest + (frameNumber - this.oldest().frameNumber)) % this.maxSize];
         }
 
-        while (frameNumber > this._getNewest().frameNumber) {
+        while (frameNumber > this.newest().frameNumber) {
 
             this._add();
         }
 
-        return this._getNewest();
+        return this.newest();
     }
 
     /**
@@ -79,7 +79,7 @@ export default class FrameBuffer {
         let frame = this.get(frameNumber);
         frame.issueCommand(command);
 
-        while (++frameNumber <= this._getNewest().frameNumber) {
+        while (++frameNumber <= this.newest().frameNumber) {
 
             this.get(frameNumber).processed = false;
         }
@@ -87,17 +87,17 @@ export default class FrameBuffer {
 
     /**
      * 
-     * @param frameNumber {int} frameNumber of the frame to process and return.
-     * @param processor {function (Map, Command)} processor to use to process commands.
+     * @param frameNumber {int} frameNumber of the frame to process and return state for.
+     * @param processor {function (State, Command)} processor to use to process commands in order to determine state.
      */
     process(frameNumber, processor) {
         
-        if (frameNumber < this._getOldest().frameNumber) {
+        if (frameNumber < this.oldest().frameNumber) {
 
-            throw new OutOfRangeError(`Can't process frame ${frameNumber} older than the oldest buffered one (${this._getOldest().frameNumber}).`);
+            throw new OutOfRangeError(`Can't process frame ${frameNumber} older than the oldest buffered one (${this.oldest().frameNumber}).`);
         }
 
-        let i = this._getOldest().frameNumber; 
+        let i = this.oldest().frameNumber; 
         while (i <= frameNumber) {
 
             let frame = this.get(i++);

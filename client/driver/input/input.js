@@ -1,4 +1,5 @@
 import Driver from "../driver.js";
+import Control from "../../app/control.js";
 import OnOff from "../../app/onOff.js";
 
 export default class Input extends Driver {
@@ -8,37 +9,52 @@ export default class Input extends Driver {
         super(name);
     }
 
-    activate(name, args = undefined) {
+    /**
+     * Marks a control as active.
+     * 
+     * @param control {Control} Control to mark active.
+     */
+    activate(control) {
 
-        if (!Input.state.has(name)) {
+        if (!Input.activeControls.has(control.name)) {
 
-            Input.activated.raise({name, args});
+            Input.activated.raise(control);
         }
 
-        Input.state.set(name, args ? args : true);
+        Input.activeControls.set(control.name, control);
     }
 
-    deactivate(name) {
+    /**
+     * Marks a control as inactive.
+     * 
+     * @param control {Control} Control to mark inactive.
+     */
+    deactivate(control) {
 
-        if (Input.state.has(name)) {
+        if (Input.activeControls.has(control.name)) {
 
-            Input.deactivated.raise({name});
-            Input.state.delete(name);
+            Input.deactivated.raise(control);
+            Input.activeControls.delete(control.name);
         }
     }
 
-    tick(name, args) {
+    /**
+     * Briefly marks a control as active, then as inactive again.
+     * 
+     * @param control {Control} Control to tick.
+     */
+    tick(control) {
 
-        activate(name, args);
-        deactivate(name);
+        activate(control);
+        deactivate(control);
     }
 };
 
-Input.state = new Map();
+Input.activeControls = new Map();
 Input.activated = new OnOff("Input activated");
 Input.deactivated = new OnOff("Input deactivated");
 
 Input.isActive = function(name) {
 
-    return (Input.state.has(name) && Input.state.get(name));
+    return (Input.activeControls.has(name) && Input.activeControls.get(name));
 }

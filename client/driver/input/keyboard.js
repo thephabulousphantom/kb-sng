@@ -1,5 +1,6 @@
 import Input from "./input.js";
- 
+import KeyControl from "./keyControl.js";
+
 export default class Keyboard extends Input {
 
     constructor(name = "Keyboard") {
@@ -23,36 +24,13 @@ export default class Keyboard extends Input {
         return super.onUnload();
     }
 
-    keyEventToKeyArgs(evt) {
-
-        let keyName = evt.key;
-        if (keyName.length == 1) {
-
-            keyName = keyName.toLocaleUpperCase();
-        }
-
-        let keyCode = evt.keyCode;
-
-        return {
-            name: keyName,
-            type: "Keyboard",
-            code: keyCode
-        };
-    }
-
     onKeyDown(evt) {
 
-        let args = this.keyEventToKeyArgs(evt);
-        args.active = true;
-
-        super.activate(args.name, args);
+        super.activate(new KeyControl(evt.key, evt.keyCode));
     }
 
     onKeyUp(evt) {
 
-        let args = this.keyEventToKeyArgs(evt);
-        args.active = false;
-
-        super.deactivate(args.name, args);
+        super.deactivate(new KeyControl(evt.key, evt.keyCode));
     }
 }
