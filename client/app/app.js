@@ -123,7 +123,6 @@ import AlreadyRegisteredError from "../error/alreadyRegistered.js";
             requestAnimationFrame(this.tick.bind(this));
         }
 
-        this.frameNumber++;
         this.processFrame();
     }
 
@@ -183,6 +182,10 @@ import AlreadyRegisteredError from "../error/alreadyRegistered.js";
 
     processFrame() {
 
-        return this.currentState();
+        this.frameNumber++;
+        let state = this.currentState();
+        state.int("frame", this.frameNumber);
+
+        return state;
     }
 } 

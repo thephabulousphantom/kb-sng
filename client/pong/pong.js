@@ -66,7 +66,5 @@ export class PongApp extends App {
     processFrame() {
 
         let state = super.processFrame();
-
-        state.int("frame", this.frameNumber);
     }
 }
