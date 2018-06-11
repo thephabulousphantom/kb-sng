@@ -1,4 +1,4 @@
-export default class AssertFailedError extends Error {
+export default class AssertionFailedError extends Error {
 
     constructor(message = "Assertion failed.") {
 

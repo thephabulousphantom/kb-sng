@@ -1,7 +1,6 @@
 import Frame from "./frame.js";
 import Command from "../command/command.js";
-import OutOfRangeError from "../error/outOfRange.js";
-import NotImplementedError from "../error/notImplemented.js";
+import FrameBufferError from "../error/frameBufferError.js";
 
 export default class FrameBuffer {
 
@@ -53,7 +52,7 @@ export default class FrameBuffer {
 
         if (frameNumber < this.oldest().frameNumber) {
 
-            throw new OutOfRangeError(`Can't retrieve frame ${frameNumber} older than the oldest buffered one (${this.oldest().frameNumber}).`);
+            throw new FrameBufferError(`Can't retrieve frame ${frameNumber} older than the oldest buffered one (${this.oldest().frameNumber}).`);
         }
 
         if (frameNumber <= this.newest().frameNumber) {
@@ -94,7 +93,7 @@ export default class FrameBuffer {
         
         if (frameNumber < this.oldest().frameNumber) {
 
-            throw new OutOfRangeError(`Can't process frame ${frameNumber} older than the oldest buffered one (${this.oldest().frameNumber}).`);
+            throw new FrameBufferError(`Can't process frame ${frameNumber} older than the oldest buffered one (${this.oldest().frameNumber}).`);
         }
 
         let i = this.oldest().frameNumber; 

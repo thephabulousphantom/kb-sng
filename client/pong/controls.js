@@ -1,8 +1,8 @@
-import Control from "../app/control.js";
-import BinaryControl from "../app/binaryControl.js";
-import AnalogControl from "../app/analogControl.js";
+import Control from "../control/control.js";
+import DigitalControl from "../control/digitalControl.js";
+import AnalogControl from "../control/analogControl.js";
 
-export class PlayerLeftUpControl extends BinaryControl {
+export class PlayerLeftUpControl extends DigitalControl {
 
     constructor(value) {
 
@@ -10,7 +10,7 @@ export class PlayerLeftUpControl extends BinaryControl {
     }
 }
 
-export class PlayerLeftDownControl extends BinaryControl {
+export class PlayerLeftDownControl extends DigitalControl {
 
     constructor(value) {
 
@@ -18,7 +18,7 @@ export class PlayerLeftDownControl extends BinaryControl {
     }
 }
 
-export class PlayerRightUpControl extends BinaryControl {
+export class PlayerRightUpControl extends DigitalControl {
 
     constructor(value) {
 
@@ -26,7 +26,7 @@ export class PlayerRightUpControl extends BinaryControl {
     }
 }
 
-export class PlayerRightDownControl extends BinaryControl {
+export class PlayerRightDownControl extends DigitalControl {
 
     constructor(value) {
 

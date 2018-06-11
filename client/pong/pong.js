@@ -10,17 +10,32 @@ export class PongApp extends App {
 
         super();
 
-        this.controlChanged.on(this.onControlChanged);
+        this.controls = {
+            PlayerLeftUp: new Controls.PlayerLeftUpControl(),
+            PlayerLeftDown: new Controls.PlayerLeftDownControl(),
+            PlayerRightUp: new Controls.PlayerRightUpControl(),
+            PlayerRightDown: new Controls.PlayerRightDownControl()
+        };
+
+        this.controlIdLookup = {};
+        for (let id in this.controls) {
+
+            this.controlIdLookup[this.controls[id].getId()] = this.controls[id];
+        }
     }
 
     init() {
 
         super.init();
 
-        super.registerControl(new Controls.PlayerLeftUpControl());
-        super.registerControl(new Controls.PlayerLeftDownControl());
-        super.registerControl(new Controls.PlayerRightUpControl());
-        super.registerControl(new Controls.PlayerRightDownControl());
+        this.controlChanged.on(this.onControlChanged.bind(this));
+        
+        super.bindControls({
+            "$-Key-W": this.controls.PlayerLeftUp,
+            "$-Key-S": this.controls.PlayerLeftDown,
+            "$-Key-I": this.controls.PlayerRightUp,
+            "$-Key-K": this.controls.PlayerRightDown
+        });
 
         let mainContainer = document.createElement("div");
         mainContainer.innerHTML = ""
@@ -30,22 +45,7 @@ export class PongApp extends App {
             + "<div>P2 DOWN: <span id='PlayerRightDown_control'>&nbsp;</span><div>";
 
         document.body.appendChild(mainContainer);
-    }
 
-    translate(control) {
-
-        if (control.type == "Key") {
-
-            switch (control.name) {
-
-                case "W": return new Controls.PlayerLeftUpControl(control.value);
-                case "S": return new Controls.PlayerLeftDownControl(control.value);
-                case "I": return new Controls.PlayerRightUpControl(control.value);
-                case "K": return new Controls.PlayerRightDownControl(control.value);
-            }
-        }
-
-        return super.translate(control);
     }
 
     processCommand(state, command) {
@@ -55,9 +55,10 @@ export class PongApp extends App {
 
     onControlChanged(data) {
 
-        log.debug("control changed: " + JSON.stringify(data));
+        let state = data.state;
+        let control = this.controlIdLookup[data.id];
 
-        let controlSpan = document.getElementById(data.name + "_control");
+        let controlSpan = document.getElementById(control.name + "_control");
         controlSpan.innerHTML = data.value
             ? "X"
             : "&nbsp;";

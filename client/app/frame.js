@@ -1,5 +1,4 @@
 import State from "./state.js";
-import NotImplementedError from "../error/notImplemented.js";
 
 export default class Frame {
 

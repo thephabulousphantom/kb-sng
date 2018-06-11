@@ -4,7 +4,7 @@ export default class Control {
      * Constructs a new control object.
      * 
      * @param name {String} Control name.
-     * @param type {String} Control type.
+     * @param type {String} Control type, e.g. keyboard, mouse, joystick...
      */
     constructor(name, type) {
 
@@ -15,8 +15,19 @@ export default class Control {
     /**
      * Returns key under which this control's state is maintained.
      */
-    getStateKey() {
+    getId() {
 
         return `$-${this.type}-${this.name}`;
     }
+}
+
+/**
+ * Gets control ID based on its name and type.
+ * 
+ * @param name {String} Name of the control whose ID to return.
+ * @param type {String} Type of the control whose ID to return.
+ */
+Control.getId = function(name, type)  {
+
+    return `$-${type}-${name}`;
 }

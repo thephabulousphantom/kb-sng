@@ -1,6 +1,6 @@
 import Driver from "../driver.js";
-import Control from "../../app/control.js";
-import OnOff from "../../app/onOff.js";
+import Control from "../../control/control.js";
+import Event from "../../app/event.js";
 
 export default class Input extends Driver {
 
@@ -10,51 +10,55 @@ export default class Input extends Driver {
     }
 
     /**
-     * Marks a control as active.
+     * Changes a control.
      * 
-     * @param control {Control} Control to mark active.
+     * @param control {Control} Control to change.
      */
-    activate(control) {
+    change(control) {
 
-        if (!Input.activeControls.has(control.name)) {
-
-            Input.activated.raise(control);
-        }
-
-        Input.activeControls.set(control.name, control);
+        Input.all.set(control.getId(), control);
+        Input.changed.raise(control);
     }
 
     /**
-     * Marks a control as inactive.
+     * Gets a control.
      * 
-     * @param control {Control} Control to mark inactive.
+     * @param id {String} Id of the control to return.
      */
-    deactivate(control) {
+    get(id) {
 
-        if (Input.activeControls.has(control.name)) {
-
-            Input.deactivated.raise(control);
-            Input.activeControls.delete(control.name);
-        }
+        return Input.get(id);
     }
 
     /**
-     * Briefly marks a control as active, then as inactive again.
+     * Gets value of a control.
      * 
-     * @param control {Control} Control to tick.
+     * @param id {String} Id of the control whose value to return.
+     * @param def {*} Dafault value to return if the control is unknown.
      */
-    tick(control) {
+    value(id, def) {
 
-        activate(control);
-        deactivate(control);
+        let control = get(id);
+        return control === undefined
+            ? def
+            : control.value;
     }
 };
 
-Input.activeControls = new Map();
-Input.activated = new OnOff("Input activated");
-Input.deactivated = new OnOff("Input deactivated");
+Input.all = new Map();
+Input.changed = new Event("InputChanged");
 
-Input.isActive = function(name) {
+/**
+ * Gets a control.
+ * 
+ * @param name {String} Name of the control to return.
+ */
+Input.get = function(id) {
 
-    return (Input.activeControls.has(name) && Input.activeControls.get(name));
+    if (!Input.all.has(id)) {
+
+        return undefined;
+    }
+    
+    return Input.all.get(id);
 }

@@ -16,73 +16,119 @@ export default class State {
     }
 
     /**
-     * Gets value of a key in this state object.
+     * Gets raw stored value of a key in this state object.
      * 
      * @param key {String} key to retrieve value for.
+     * @param def {*} default value to return if there's no value stored for under the key.
      */
-    get(key) {
+    _get(key, def) {
 
         return this._map.get(key);
     }
 
     /**
-     * Sets value of a key in this state object.
+     * Sets raw value of a key in this state object.
      * 
-     * @param key {String} key to set the value for. 
-     * @param value {*} value to set. 
+     * @param key {String} key to store raw value for.
+     * @param value {*} raw value to set for the key.
      */
-    set(key, value) {
+    _set(key, value) {
 
-        return this._map.set(key, value);
+        this._map.set(key, value);
     }
 
+    /**
+     * Removes a key and value from state.
+     * 
+     * @param key {String} key to remove.
+     */
+    _remove(key) {
+
+        this._map.delete(key);
+    }
+
+    /**
+     * Gets boolean value of a key in this state object.
+     * Explicitly casts the value to a boolean true or false. 
+     * 
+     * @param key {String} key to set the value for.
+     * @param value {Number} If provided, value to set, otherwise value is only retrieved.
+     */
     bool(key, value) {
 
         if (typeof(value) === undefined) {
 
-            return !!this.get(key);
+            return !!this._get(key, false);
         }
 
-        return this.set(key, !!value);
+        return this._set(key, !!value);
     }
 
+    /**
+     * Gets integer value of a key in this state object.
+     * Explicitly casts the value to an integer. 
+     * 
+     * @param key {String} key to set the value for.
+     * @param value {Number} If provided, value to set, otherwise value is only retrieved.
+     */
     int(key, value) {
 
         if (typeof(value) === undefined) {
 
-            return this.get(key) | 0;
+            return this._get(key, 0) | 0;
         }
 
-        return this.set(key, value | 0);
+        return this._set(key, value | 0);
     }
 
+    /**
+     * Gets floating point value of a key in this state object.
+     * Explicitly casts the value to a floating point. 
+     * 
+     * @param key {String} key to set the value for.
+     * @param value {Number} If provided, value to set, otherwise value is only retrieved.
+     */
     float(key, value) {
 
         if (typeof(value) === undefined) {
 
-            return 1.0 * this.get(key);
+            return 1.0 * this._get(key, 0.0);
         }
 
-        return this.set(key, 1.0 * value);
+        return this._set(key, 1.0 * value);
     }
 
+    /**
+     * Gets string value of a key in this state object.
+     * Explicitly casts the value to a string. 
+     * 
+     * @param key {String} key to set the value for.
+     * @param value {Number} If provided, value to set, otherwise value is only retrieved.
+     */
     string(key, value) {
 
         if (typeof(value) === undefined) {
 
-            return "" + this.get(key);
+            return "" + this._get(key, "");
         }
 
-        return this.set(key, "" + value);
+        return this._set(key, "" + value);
     }
 
-    object(key, value) {
+    /**
+     * Gets object value of a key in this state object.
+     * Explicitly casts the value to an object, persisted by JSON serialization / deserialization. 
+     * 
+     * @param key {String} key to set the value for.
+     * @param value {Number} If provided, value to set, otherwise value is only retrieved.
+     */
+    json(key, value) {
 
         if (typeof(value) === undefined) {
 
-            return this.get(key);
+            return JSON.parse(this._get(key, "{}"));
         }
 
-        return this.set(key, value);
+        return this._set(key, JSON.stringify(value));
     }
 }

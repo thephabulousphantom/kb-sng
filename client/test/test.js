@@ -1,5 +1,5 @@
 import log from "../app/log.js";
-import AssertionFailedError from "../error/assertFailed.js";
+import AssertionFailedError from "../error/assertionFailedError.js";
 
 export function Run(name, testFunction) {
 

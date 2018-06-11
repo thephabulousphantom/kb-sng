@@ -1,8 +1,6 @@
-import NotImplementedError from "../error/notImplemented.js";
-import AlreadyAddedError from "../error/alreadyAdded.js";
-import CallbackMissingError from "../error/callbackMissing.js";
+import CallbackMissingError from "../error/callbackMissingError.js";
 
-export default class OnOff {
+export default class Event {
 
     constructor(name) {
 

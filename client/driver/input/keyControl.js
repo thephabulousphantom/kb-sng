@@ -1,6 +1,6 @@
-import BinaryControl from "../../app/binaryControl.js";
+import DigitalControl from "../../control/digitalControl.js";
 
-export default class KeyControl extends BinaryControl {
+export default class KeyControl extends DigitalControl {
 
     constructor(name, code, value = false) {
 

@@ -11,7 +11,7 @@ function ModifyStateProcessor(state, command) {
 
         case "ModifyState":
 
-            state.set(command.key, command.value);
+            state._set(command.key, command.value);
             break;
     }
 };
@@ -26,13 +26,13 @@ export default function FrameBufferTest() {
 
         let state = frameBuffer.process(3, ModifyStateProcessor);
 
-        Test.Assert(state.get("x") == 1, "Changes to a past frame must reflect to newer ones.");
+        Test.Assert(state._get("x") === 1, "Changes to a past frame must reflect to newer ones.");
 
         frameBuffer.issueCommand(2, new ModifyStateCommand("x", 2));
         
         state = frameBuffer.process(3, ModifyStateProcessor);
 
-        Test.Assert(state.get("x") == 2, "Changes to a past frame must update newer ones, even if they were processed already.");
+        Test.Assert(state._get("x") === 2, "Changes to a past frame must update newer ones, even if they were processed already.");
         
     });
 }

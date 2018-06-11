@@ -1,5 +1,5 @@
 import Command from "./command.js";
-import Control from "../app/control.js";
+import Control from "../control/control.js";
 
 export default class RegisterControl extends Command {
 

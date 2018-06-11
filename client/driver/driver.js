@@ -1,6 +1,5 @@
-import OnOff from "../app/onOff.js";
-import AlreadyLoadedError from "../error/alreadyloaded.js";
-import NotLoadedError from "../error/notloaded.js";
+import Event from "../app/event.js";
+import DriverError from "../error/driverError.js";
 
 export default class Driver {
 
@@ -23,7 +22,7 @@ export default class Driver {
 
         if (Driver.all.has(this.name)) {
 
-            throw new AlreadyLoadedError(`Can't load driver ${this.name} - already loaded.`);
+            throw new DriverError(`Can't load driver ${this.name} - already loaded.`);
         }
 
         Driver.all.set(this.name, this);
@@ -49,7 +48,7 @@ export default class Driver {
 
         if (!Driver.all.has(this.name)) {
 
-            throw new NotLoadedError(`Can't unload driver ${this.name} - not loaded.`);
+            throw new DriverError(`Can't unload driver ${this.name} - not loaded.`);
         }
 
         Driver.all.delete(this.name);
@@ -63,5 +62,5 @@ export default class Driver {
 };
 
 Driver.all = new Map();
-Driver.loaded = new OnOff("Driver loaded");
-Driver.unloaded = new OnOff("Driver unloaded");
+Driver.loaded = new Event("Driver loaded");
+Driver.unloaded = new Event("Driver unloaded");
