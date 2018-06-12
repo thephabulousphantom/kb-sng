@@ -56,7 +56,7 @@ export default class State {
      */
     bool(key, value) {
 
-        if (typeof(value) === undefined) {
+        if (value === undefined) {
 
             return !!this._get(key, false);
         }
@@ -73,12 +73,12 @@ export default class State {
      */
     int(key, value) {
 
-        if (typeof(value) === undefined) {
+        if (value === undefined) {
 
             return this._get(key, 0) | 0;
         }
 
-        return this._set(key, value | 0);
+        return this._set(key, (isNaN(value) ? 0 : value) | 0);
     }
 
     /**
@@ -90,12 +90,12 @@ export default class State {
      */
     float(key, value) {
 
-        if (typeof(value) === undefined) {
+        if (value === undefined) {
 
             return 1.0 * this._get(key, 0.0);
         }
 
-        return this._set(key, 1.0 * value);
+        return this._set(key, 1.0 * (isNaN(value) ? 0.0 : value));
     }
 
     /**
@@ -107,7 +107,7 @@ export default class State {
      */
     string(key, value) {
 
-        if (typeof(value) === undefined) {
+        if (value === undefined) {
 
             return "" + this._get(key, "");
         }
@@ -124,7 +124,7 @@ export default class State {
      */
     json(key, value) {
 
-        if (typeof(value) === undefined) {
+        if (value === undefined) {
 
             return JSON.parse(this._get(key, "{}"));
         }

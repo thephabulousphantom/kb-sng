@@ -12,6 +12,8 @@ import State from "./frame.js";
 import Frame from "./frame.js";
 import FrameBuffer from "./frameBuffer.js";
 import ApplicationError from "../error/applicationError.js";
+import Property from "./property.js";
+import Entity from "./entity.js";
 
 export default class App {
 
@@ -26,6 +28,8 @@ export default class App {
         this.frames = new FrameBuffer();
         this.frameNumber = 0;
         this._controlBindings = {};
+        this.rootEntity = new Entity("root");
+        this._initialized = false;
         
         window.addEventListener("load", this.init.bind(this));
     }
@@ -69,6 +73,8 @@ export default class App {
 
         this._keyboard = new Keyboard();
         this._keyboard.load();
+
+        this._initialized = true;
     }
 
     /**
@@ -171,7 +177,10 @@ export default class App {
             requestAnimationFrame(this.tick.bind(this));
         }
 
-        this.processFrame();
+        if (this._initialized) {
+
+            this.processFrame();
+        }
     }
 
     processCommand(state, command) {
@@ -259,6 +268,9 @@ export default class App {
 
         let state = this.currentState();
         state.int("frame", this.frameNumber);
+
+        Property.context = state;
+        this.rootEntity.processFrame();
 
         return state;
     }
