@@ -81,11 +81,13 @@ export class PongApp extends App {
 
         if (state.int("frame") % 30 === 0) {
 
+            let ballState = this.ball.getState();
+            
             let ballXSpanElement = document.getElementById("Ball_X");
-            ballXSpanElement.innerHTML = this.ball.x.value();
+            ballXSpanElement.innerHTML = ballState.x;//this.ball.x.value();
 
             let ballYSpanElement = document.getElementById("Ball_Y");
-            ballYSpanElement.innerHTML = this.ball.y.value();
+            ballYSpanElement.innerHTML = ballState.y;//this.ball.y.value();
         }
     }
 }

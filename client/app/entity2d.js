@@ -18,6 +18,8 @@ export default class Entity2d extends Entity {
         this.y = new Property(PropertyTypes.float, "y", this);
         this.vx = new Property(PropertyTypes.float, "vx", this);
         this.vy = new Property(PropertyTypes.float, "vy", this);
+        this.width = new Property(PropertyTypes.float, "w", this);
+        this.height = new Property(PropertyTypes.float, "h", this);
     }
 
     /**
