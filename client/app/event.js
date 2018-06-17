@@ -31,6 +31,7 @@ export default class Event {
 
     off(callback, state = undefined) {
 
+        let removedCallback = undefined;
         for (let i = 0; i < this._listeners.length; i++) {
 
             if (this._listeners[i].callback === callback && this._listeners[i].state === state) {

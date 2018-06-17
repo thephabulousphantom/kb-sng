@@ -58,7 +58,13 @@ export default class State {
 
         if (value === undefined) {
 
-            return !!this._get(key, false);
+            let ret = this._get(key, false);
+            if (ret === undefined) {
+
+                return ret;
+            }
+
+            return !!ret;
         }
 
         return this._set(key, !!value);
@@ -75,7 +81,13 @@ export default class State {
 
         if (value === undefined) {
 
-            return this._get(key, 0) | 0;
+            let ret = this._get(key, 0);
+            if (ret === undefined) {
+
+                return ret;
+            }
+
+            return ret | 0;
         }
 
         return this._set(key, (isNaN(value) ? 0 : value) | 0);
@@ -92,7 +104,13 @@ export default class State {
 
         if (value === undefined) {
 
-            return 1.0 * this._get(key, 0.0);
+            let ret = this._get(key, 0.0);
+            if (ret === undefined) {
+
+                return ret;
+            }
+
+            return 1.0 * ret;
         }
 
         return this._set(key, 1.0 * (isNaN(value) ? 0.0 : value));
@@ -109,7 +127,13 @@ export default class State {
 
         if (value === undefined) {
 
-            return "" + this._get(key, "");
+            let ret = this._get(key, "");
+            if (ret === undefined) {
+
+                return ret;
+            }
+
+            return "" + ret;
         }
 
         return this._set(key, "" + value);
@@ -126,7 +150,13 @@ export default class State {
 
         if (value === undefined) {
 
-            return JSON.parse(this._get(key, "{}"));
+            let ret = this._get(key, "{}");
+            if (ret === undefined) {
+
+                return ret;
+            }
+
+            return JSON.parse(ret);
         }
 
         return this._set(key, JSON.stringify(value));

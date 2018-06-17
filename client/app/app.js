@@ -8,12 +8,14 @@ import ModifyState from "../command/modifyState.js";
 import RegisterControl from "../command/registerControl.js";
 import UnregisterControl from "../command/unregisterControl.js";
 import ChangeControl from "../command/changeControl.js";
-import State from "./frame.js";
+import ChangeScene from "../command/changeScene.js";
+import State from "./state.js";
 import Frame from "./frame.js";
 import FrameBuffer from "./frameBuffer.js";
 import ApplicationError from "../error/applicationError.js";
 import Property from "./property.js";
 import Entity from "./entity.js";
+import Scene from "./scene.js";
 
 export default class App {
 
@@ -30,6 +32,7 @@ export default class App {
         this._controlBindings = {};
         this.rootEntity = new Entity("root");
         this._initialized = false;
+        this.scenes = {};
         
         window.addEventListener("load", this.init.bind(this));
     }
@@ -39,11 +42,6 @@ export default class App {
         for (let id in bindings) {
 
             let control = bindings[id];
-            if (!this._controlBindings[id]) {
-
-                this.registerControl(control);
-            }
-
             this._controlBindings[id] = control;
         }
     }
@@ -52,13 +50,10 @@ export default class App {
 
         for (let id in bindings) {
 
-            let control = bindings[id];
             if (this._controlBindings[id]) {
 
-                this.unregisterControl(control);
+                delete this._controlBindings[id];
             }
-
-            delete this._controlBindings[id];
         }
     }
 
@@ -95,6 +90,46 @@ export default class App {
     unregisterControl(control) {
 
         this.issueCommand(new UnregisterControl(control));
+    }
+
+    /**
+     * Registers a scene, so that it can be used in the app.
+     * 
+     * @param scene {Scene} Scene to register.
+     */
+    registerScene(scene) {
+
+        if (this.scenes[scene.name] !== undefined) {
+
+            throw new ApplicationError(`Can't register scene ${scene.name} - it's already registered.`);
+        }
+
+        this.scenes[scene.name] = scene;
+    }
+
+    /**
+     * Unregisters a scene, so that it can no longer be used in the app.
+     * 
+     * @param scene {Scene} Scene to unregister.
+     */
+    unregisterScene(scene) {
+
+        if (this.scenes[scene.name] === undefined) {
+
+            throw new ApplicationError(`Can't unregister scene ${scene.name} - it's not registered.`);
+        }
+
+        delete this.scenes[scene.name];
+    }
+
+    /**
+     * Issues a command to switch to a different scene.
+     * 
+     * @param name {String} Name of a registered scene to switch to.
+     */
+    changeScene(name) {
+
+        this.issueCommand(new ChangeScene(name));
     }
 
     onDriverLoaded(data) {
@@ -183,6 +218,12 @@ export default class App {
         }
     }
 
+    /**
+     * Provides an opportunity for the app to process a command.
+     * 
+     * @param state {State} Current app state.
+     * @param command {Commmand} Issued command to process.
+     */
     processCommand(state, command) {
 
         switch (command.name) {
@@ -241,6 +282,33 @@ export default class App {
                     });
                 }
                 break;
+
+            case "ChangeScene":
+                {
+                    let name = command.sceneName;
+
+                    if(this.scenes[name] === undefined) {
+
+                        throw new ApplicationError(`Can't switch to unknown scene ${name}.`);
+                    }
+
+                    if (state.string("scene")) {
+
+                        let currentScene = this.scenes[state.string("scene")];
+                        currentScene.cleanup(state);
+                    }
+
+                    let scene = this.scenes[name];
+                    scene.init(state);
+                }
+                break;
+        }
+
+        if (state.string("scene")) {
+
+            let scene = this.scenes[state.string("scene")];
+
+            scene.processCommand(state, command);
         }
     }
 
@@ -271,6 +339,13 @@ export default class App {
 
         Property.context = state;
         this.rootEntity.processFrame();
+
+        if (state.string("scene")) {
+
+            let scene = this.scenes[state.string("scene")];
+
+            scene.processFrame(state);
+        }
 
         return state;
     }

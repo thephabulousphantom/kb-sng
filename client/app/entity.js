@@ -12,6 +12,8 @@ export default class Entity extends Property {
     constructor(name, parent) {
 
         super(PropertyTypes.string, name, parent);
+
+        this._properties = null;
     }
 
     /**
@@ -33,18 +35,29 @@ export default class Entity extends Property {
      */
     getState() {
 
+        if (!this._properties) {
+
+            this._properties = [];
+
+            for (let property in this) {
+
+                if (property.charAt(0) === "_") {
+
+                    continue;
+                }
+
+                if (this[property] instanceof Property) {
+
+                    this._properties.push(property);
+                }
+            }
+        }
+
         let state = {};
-        for (let property in this) {
+        for (let i = 0; i < this._properties.length; i++) {
 
-            if (property.charAt(0) === "_") {
-
-                continue;
-            }
-
-            if (this[property] instanceof Property) {
-
-                state[property] = this[property].value();
-            }
+            let property = this._properties[i];
+            state[property] = this[property].value();
         }
 
         return state;
@@ -57,14 +70,28 @@ export default class Entity extends Property {
      */
     setState(state) {
 
-        for (let property in state) {
+        if (!this._properties) {
 
-            if (property.charAt(0) === "_") {
+            this._properties = [];
 
-                continue;
+            for (let property in this) {
+
+                if (property.charAt(0) === "_") {
+
+                    continue;
+                }
+
+                if (this[property] instanceof Property) {
+
+                    this._properties.push(property);
+                }
             }
+        }
 
-            if (this[property] !== undefined && this[property] instanceof Property) {
+        for (let i = 0; i < this._properties.length; i++) {
+
+            let property = this._properties[i];
+            if (state[property] !== undefined) {
 
                 this[property].value(state[property]);
             }

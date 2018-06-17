@@ -6,7 +6,14 @@ export default class KeyControl extends DigitalControl {
 
         if (name.length == 1) {
 
-            name = name.toLocaleUpperCase();
+            if (name === " ") {
+
+                name = "Space";
+            }
+            else {
+
+                name = name.toLocaleUpperCase();
+            }
         }
 
         super(name, "Key", value);

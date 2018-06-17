@@ -2,6 +2,14 @@ import Control from "../control/control.js";
 import DigitalControl from "../control/digitalControl.js";
 import AnalogControl from "../control/analogControl.js";
 
+export class EnterControl extends DigitalControl {
+
+    constructor(value) {
+
+        super("Enter", "App", value);
+    }
+}
+
 export class PlayerLeftUpControl extends DigitalControl {
 
     constructor(value) {
