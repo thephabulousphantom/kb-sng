@@ -1,21 +1,26 @@
 import log from "./log.js";
 import Event from "./event.js";
-import Driver from "../driver/driver.js";
-import Input from "../driver/input/input.js";
+import Scene from "./scene.js";
+
+import ApplicationError from "../error/applicationError.js";
+
 import Control from "../control/control.js";
-import Keyboard from "../driver/input/keyboard.js";
+
+import State from "../state/state.js";
+import Frame from "../state/frame.js";
+import FrameBuffer from "../state/frameBuffer.js";
+import Property from "../state/property.js";
+import Entity from "../state/entity.js";
+
 import ModifyState from "../command/modifyState.js";
 import RegisterControl from "../command/registerControl.js";
 import UnregisterControl from "../command/unregisterControl.js";
 import ChangeControl from "../command/changeControl.js";
 import ChangeScene from "../command/changeScene.js";
-import State from "./state.js";
-import Frame from "./frame.js";
-import FrameBuffer from "./frameBuffer.js";
-import ApplicationError from "../error/applicationError.js";
-import Property from "./property.js";
-import Entity from "./entity.js";
-import Scene from "./scene.js";
+
+import Driver from "../driver/driver.js";
+import Input from "../driver/input/input.js";
+import Keyboard from "../driver/input/keyboard.js";
 
 export default class App {
 
@@ -23,10 +28,11 @@ export default class App {
 
         log.info("Constructing the app...");
 
+        Event.register("ControlRegistered");
+        Event.register("ControlUnregistered");
+        Event.register("ControlChanged");
+
         this.running = false;
-        this.controlRegistered = new Event("ControlRegistered");
-        this.controlUnregistered = new Event("ControlUnregistered");
-        this.controlChanged = new Event("ControlChanged");
         this.frames = new FrameBuffer();
         this.frameNumber = 0;
         this._controlBindings = {};
@@ -61,10 +67,9 @@ export default class App {
 
         log.info("Initializing the app...");
 
-        Driver.loaded.on(this.onDriverLoaded);
-        Driver.unloaded.on(this.onDriverUnloaded);
-
-        Input.changed.on(this.onInputChanged.bind(this));
+        Event.on("DriverLoaded", this.onDriverLoaded);
+        Event.on("DriverUnloaded", this.onDriverUnloaded);
+        Event.on("InputChanged", this.onInputChanged.bind(this));
 
         this._keyboard = new Keyboard();
         this._keyboard.load();
@@ -190,6 +195,9 @@ export default class App {
         this.frames.issueCommand(this.frameNumber, command);
     }
 
+    /**
+     * Starts the app.
+     */
     run() {
 
         log.info("Running the app...");
@@ -198,6 +206,9 @@ export default class App {
         this.tick();
     }
 
+    /**
+     * Stops the app.
+     */
     stop() {
 
         log.info("Stopping the app...");
@@ -205,6 +216,9 @@ export default class App {
         this.running = false;
     }
 
+    /**
+     * Called once per animation frame, @ 60 FPS.
+     */
     tick() {
 
         if (this.running) {
@@ -242,7 +256,7 @@ export default class App {
 
                     state._set(id, command.control.value);
 
-                    this.controlRegistered.raise({
+                    Event.raise( "ControlRegistered", {
                         state: state,
                         id: id,
                         value: command.control.value
@@ -260,7 +274,7 @@ export default class App {
 
                     state._remove(id);
 
-                    this.controlUnregistered.raise({
+                    Event.raise("ControlUnregistered", {
                         state: state,
                         id: id
                     });
@@ -274,7 +288,7 @@ export default class App {
 
                     state._set(id, command.control.value);
 
-                    this.controlChanged.raise({
+                    Event.raise("ControlChanged", {
                         state: state,
                         id: id,
                         value: command.control.value,

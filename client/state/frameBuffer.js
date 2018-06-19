@@ -1,6 +1,6 @@
 import Frame from "./frame.js";
-import Command from "../command/command.js";
 import FrameBufferError from "../error/frameBufferError.js";
+import Command from "../command/command.js";
 
 export default class FrameBuffer {
 

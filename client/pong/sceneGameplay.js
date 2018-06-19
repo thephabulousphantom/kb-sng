@@ -1,5 +1,6 @@
 import Scene from "../app/scene.js";
-import State from "../app/state.js";
+import Event from "../app/event.js";
+import State from "../state/state.js";
 import Command from "../command/command.js";
 import * as Controls from "./controls.js";
 
@@ -32,19 +33,18 @@ export default class SceneGameplay extends Scene {
         
         document.body.innerHTML = "Gameplay.";
 
-        this.app.controlChanged.on(this.onControlChanged.bind(this));
-
         this.app.registerControl(this.controls.PlayerLeftUp);
         this.app.registerControl(this.controls.PlayerLeftDown);
         this.app.registerControl(this.controls.PlayerRightUp);
         this.app.registerControl(this.controls.PlayerRightDown);
-
         this.app.bindControls({
             "$-Key-W": this.controls.PlayerLeftUp,
             "$-Key-S": this.controls.PlayerLeftDown,
             "$-Key-I": this.controls.PlayerRightUp,
             "$-Key-K": this.controls.PlayerRightDown
         });
+
+        Event.on("ControlChanged", this.onControlChanged.bind(this));
     }
 
     /**
@@ -57,13 +57,12 @@ export default class SceneGameplay extends Scene {
 
         document.body.innerHTML = "";
         
-        this.controlChanged.off(this.onControlChanged.bind(this));
+        Event.off("ControlChanged", this.onControlChanged.bind(this));
 
         this.app.unregisterControl(this.controls.PlayerLeftUp);
         this.app.unregisterControl(this.controls.PlayerLeftDown);
         this.app.unregisterControl(this.controls.PlayerRightUp);
         this.app.unregisterControl(this.controls.PlayerRightDown);
-
         this.app.unbindControls({
             "$-Key-W": this.controls.PlayerLeftUp,
             "$-Key-S": this.controls.PlayerLeftDown,
@@ -76,6 +75,7 @@ export default class SceneGameplay extends Scene {
 
         let state = data.state;
         let id = data.id;
+        let value = data.value;
     }
 
     /**

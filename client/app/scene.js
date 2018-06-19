@@ -1,5 +1,5 @@
-import App from "../app/app.js";
-import State from "../app/state.js";
+import App from "./app.js";
+import State from "../state/state.js";
 import Command from "../command/command.js";
 
 export default class Scene {

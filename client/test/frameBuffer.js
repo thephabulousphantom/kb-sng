@@ -1,8 +1,8 @@
 import log from "../app/log.js";
 import * as Test from "./test.js";
-import State from "../app/state.js";
-import Frame from "../app/frame.js";
-import FrameBuffer from "../app/frameBuffer.js";
+import State from "../state/state.js";
+import Frame from "../state/frame.js";
+import FrameBuffer from "../state/frameBuffer.js";
 import ModifyStateCommand from "../command/modifyState.js";
 
 function ModifyStateProcessor(state, command) {

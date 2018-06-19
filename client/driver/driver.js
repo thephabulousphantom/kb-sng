@@ -27,7 +27,7 @@ export default class Driver {
 
         Driver.all.set(this.name, this);
 
-        Driver.loaded.raise({
+        Event.raise("DriverLoaded", {
             driver: this
         });
 
@@ -53,7 +53,7 @@ export default class Driver {
 
         Driver.all.delete(this.name);
 
-        Driver.unloaded.raise({
+        Event.raise("DriverUnloaded", {
             driver: this
         });
 
@@ -62,5 +62,6 @@ export default class Driver {
 };
 
 Driver.all = new Map();
-Driver.loaded = new Event("Driver loaded");
-Driver.unloaded = new Event("Driver unloaded");
+
+Event.register("DriverLoaded");
+Event.register("DriverUnloaded");

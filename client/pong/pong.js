@@ -1,10 +1,12 @@
 import log from "../app/log.js";
+
 import App from "../app/app.js";
-import State from "../app/state.js";
-import Command from "../command/command.js";
 import Scene from "../app/scene.js";
 import SceneReady from "./sceneReady.js";
 import SceneGameplay from "./sceneGameplay.js";
+
+import State from "../state/state.js";
+import Command from "../command/command.js";
 
 export class PongApp extends App {
 

@@ -1,5 +1,6 @@
 import Scene from "../app/scene.js";
-import State from "../app/state.js";
+import Event from "../app/event.js";
+import State from "../state/state.js";
 import Command from "../command/command.js";
 import * as Controls from "./controls.js";
 
@@ -29,14 +30,13 @@ export default class SceneReady extends Scene {
 
         document.body.innerHTML = "Press Enter or Space to continue.";
 
-        this.app.controlChanged.on(this.onControlChanged.bind(this));
-
         this.app.registerControl(this.controls.Enter);
-
         this.app.bindControls({
             "$-Key-Enter": this.controls.Enter,
             "$-Key-Space": this.controls.Enter
         });
+
+        Event.on("ControlChanged", this.onControlChanged.bind(this));
     }
 
     /**
@@ -49,10 +49,9 @@ export default class SceneReady extends Scene {
 
         document.body.innerHTML = "";
 
-        this.app.controlChanged.off(this.onControlChanged.bind(this));
+        Event.off("ControlChanged", this.onControlChanged.bind(this));
 
         this.app.unregisterControl(this.controls.Enter);
-        
         this.app.unbindControls({
             "$-Key-Enter": this.controls.Enter,
             "$-Key-Space": this.controls.Enter
@@ -62,11 +61,17 @@ export default class SceneReady extends Scene {
     onControlChanged(data) {
 
         let state = data.state;
-        switch (data.id) {
+        let id = data.id;
+        let value = data.value;
 
-            case this.controls.Enter.getId():
-                this.app.changeScene("Gameplay");
-                break;
+        if (value) {
+
+            switch (id) {
+
+                case this.controls.Enter.getId():
+                    this.app.changeScene("Gameplay");
+                    break;
+            }
         }
     }
 
