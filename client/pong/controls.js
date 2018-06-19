@@ -6,7 +6,7 @@ export class EnterControl extends DigitalControl {
 
     constructor(value) {
 
-        super("Enter", "App", value);
+        super("Enter", "App", false, value);
     }
 }
 
@@ -14,7 +14,7 @@ export class PlayerLeftUpControl extends DigitalControl {
 
     constructor(value) {
 
-        super("PlayerLeftUp", "App", value);
+        super("PlayerLeftUp", "App", false, value);
     }
 }
 
@@ -22,7 +22,7 @@ export class PlayerLeftDownControl extends DigitalControl {
 
     constructor(value) {
 
-        super("PlayerLeftDown", "App", value);
+        super("PlayerLeftDown", "App", false, value);
     }
 }
 
@@ -30,7 +30,7 @@ export class PlayerRightUpControl extends DigitalControl {
 
     constructor(value) {
 
-        super("PlayerRightUp", "App", value);
+        super("PlayerRightUp", "App", false, value);
     }
 }
 
@@ -38,6 +38,6 @@ export class PlayerRightDownControl extends DigitalControl {
 
     constructor(value) {
 
-        super("PlayerRightDown", "App", value);
+        super("PlayerRightDown", "App", false, value);
     }
 }

@@ -5,11 +5,13 @@ export default class Control {
      * 
      * @param name {String} Control name.
      * @param type {String} Control type, e.g. keyboard, mouse, joystick...
+     * @param isLocal {Bool} Specifies whether this is local or global control; local controls are never propagated to other application instances.
      */
-    constructor(name, type) {
+    constructor(name, type, isLocal = true) {
 
         this.name = name;
         this.type = type;
+        this.isLocal = isLocal;
     }
 
     /**

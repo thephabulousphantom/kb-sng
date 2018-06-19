@@ -16,7 +16,7 @@ export default class KeyControl extends DigitalControl {
             }
         }
 
-        super(name, "Key", value);
+        super(name, "Key", true, value);
 
         this.code = code;
     }

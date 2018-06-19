@@ -28,16 +28,13 @@ export default class App {
 
         log.info("Constructing the app...");
 
-        Event.register("ControlRegistered");
-        Event.register("ControlUnregistered");
-        Event.register("ControlChanged");
+        this._controlBindings = {};
+        this._initialized = false;
 
         this.running = false;
         this.frames = new FrameBuffer();
         this.frameNumber = 0;
-        this._controlBindings = {};
         this.rootEntity = new Entity("root");
-        this._initialized = false;
         this.scenes = {};
         
         window.addEventListener("load", this.init.bind(this));
@@ -45,19 +42,26 @@ export default class App {
 
     bindControls(bindings) {
 
+        log.info("Binding controls:");
+
         for (let id in bindings) {
 
             let control = bindings[id];
             this._controlBindings[id] = control;
+
+            log.info(`- ${id} translates to ${control.name}`);
         }
     }
 
     unbindControls(bindings) {
 
+        log.info("Unbinding controls:");
+
         for (let id in bindings) {
 
             if (this._controlBindings[id]) {
 
+                log.info(`- ${id} no longer translates to ${this._controlBindings[id].name}`);
                 delete this._controlBindings[id];
             }
         }
@@ -67,9 +71,13 @@ export default class App {
 
         log.info("Initializing the app...");
 
-        Event.on("DriverLoaded", this.onDriverLoaded);
-        Event.on("DriverUnloaded", this.onDriverUnloaded);
-        Event.on("InputChanged", this.onInputChanged.bind(this));
+        Event.register("ControlRegistered");
+        Event.register("ControlUnregistered");
+        Event.register("ControlChanged");
+
+        Event.on("DriverLoaded", this.onDriverLoaded, this);
+        Event.on("DriverUnloaded", this.onDriverUnloaded, this);
+        Event.on("InputChanged", this.onInputChanged, this);
 
         this._keyboard = new Keyboard();
         this._keyboard.load();
@@ -84,6 +92,8 @@ export default class App {
      */
     registerControl(control) {
 
+        log.info(`Registering control ${control.name}...`);
+
         this.issueCommand(new RegisterControl(control));
     }
 
@@ -94,6 +104,8 @@ export default class App {
      */
     unregisterControl(control) {
 
+        log.info(`Unregistering control ${control.name}...`);
+
         this.issueCommand(new UnregisterControl(control));
     }
 
@@ -103,6 +115,8 @@ export default class App {
      * @param scene {Scene} Scene to register.
      */
     registerScene(scene) {
+
+        log.info(`Registering scene ${scene.name}...`);
 
         if (this.scenes[scene.name] !== undefined) {
 
@@ -119,6 +133,8 @@ export default class App {
      */
     unregisterScene(scene) {
 
+        log.info(`Unregistering scene ${scene.name}...`);
+        
         if (this.scenes[scene.name] === undefined) {
 
             throw new ApplicationError(`Can't unregister scene ${scene.name} - it's not registered.`);
@@ -134,6 +150,8 @@ export default class App {
      */
     changeScene(name) {
 
+        log.info(`Changing scene to ${name}...`);
+        
         this.issueCommand(new ChangeScene(name));
     }
 
@@ -192,6 +210,11 @@ export default class App {
      */
     issueCommand(command) {
 
+        if (log.level >= log.severity.debug) {
+
+            log.debug(`Command issued: ${JSON.stringify(command)}`);
+        }
+        
         this.frames.issueCommand(this.frameNumber, command);
     }
 

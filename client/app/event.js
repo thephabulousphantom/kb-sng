@@ -67,7 +67,7 @@ class Event {
      * @param callback {function} Function to be called once the event is raised.
      * @param state {*} Data to pass to the callback function when handling event.
      */
-    on(eventName, callback, state = undefined) {
+    on(eventName, callback, context = this, state = undefined) {
 
         if (!events.has(eventName)) {
 
@@ -79,12 +79,7 @@ class Event {
             throw new CallbackMissingError("Can't attach event handler, callback not specified.");
         }
 
-        var listener = {
-            context: this,
-            callback: callback,
-            state: state
-        };
-
+        let listener = {callback, context, state};
         let listeners = events.get(eventName);
         listeners.push(listener);
     }
@@ -96,7 +91,7 @@ class Event {
      * @param callback {function} Function that was originally passed when started listening.
      * @param state {*} Exact same state object that was originally passed when started listening.
      */
-    off(eventName, callback, state = undefined) {
+    off(eventName, callback, context = this, state = undefined) {
 
         if (!events.has(eventName)) {
 
@@ -108,8 +103,11 @@ class Event {
         for (let i = 0; i < listeners.length; i++) {
 
             let listener = listeners[i];
-            if (listener.callback === callback && listener.state === state) {
+            if (listener.callback === callback
+                && listener.context === context
+                && listener.state === state) {
 
+                listeners.splice(i--, 1);
                 removed = true;
             }
         }

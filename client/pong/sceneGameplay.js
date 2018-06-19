@@ -1,3 +1,4 @@
+import App from "../app/app.js";
 import Scene from "../app/scene.js";
 import Event from "../app/event.js";
 import State from "../state/state.js";
@@ -44,7 +45,7 @@ export default class SceneGameplay extends Scene {
             "$-Key-K": this.controls.PlayerRightDown
         });
 
-        Event.on("ControlChanged", this.onControlChanged.bind(this));
+        Event.on("ControlChanged", this.onControlChanged, this);
     }
 
     /**
@@ -57,7 +58,7 @@ export default class SceneGameplay extends Scene {
 
         document.body.innerHTML = "";
         
-        Event.off("ControlChanged", this.onControlChanged.bind(this));
+        Event.off("ControlChanged", this.onControlChanged, this);
 
         this.app.unregisterControl(this.controls.PlayerLeftUp);
         this.app.unregisterControl(this.controls.PlayerLeftDown);

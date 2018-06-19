@@ -1,3 +1,5 @@
+import log from "../app/log.js";
+
 import PropertyTypes from "./propertyTypes.js";
 import Property from "./property.js";
 
@@ -11,6 +13,8 @@ export default class Entity extends Property {
      */
     constructor(name, parent) {
 
+        log.info(`Constructing entity ${name}...`);
+        
         super(PropertyTypes.string, name, parent);
 
         this._properties = null;

@@ -36,7 +36,7 @@ export default class SceneReady extends Scene {
             "$-Key-Space": this.controls.Enter
         });
 
-        Event.on("ControlChanged", this.onControlChanged.bind(this));
+        Event.on("ControlChanged", this.onControlChanged, this);
     }
 
     /**
@@ -49,7 +49,7 @@ export default class SceneReady extends Scene {
 
         document.body.innerHTML = "";
 
-        Event.off("ControlChanged", this.onControlChanged.bind(this));
+        Event.off("ControlChanged", this.onControlChanged, this);
 
         this.app.unregisterControl(this.controls.Enter);
         this.app.unbindControls({
