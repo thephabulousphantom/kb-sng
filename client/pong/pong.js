@@ -19,27 +19,11 @@ export class PongApp extends App {
 
     init() {
 
+        super.init();
+
         this.registerScene(new SceneSplash(this));
         this.registerScene(new SceneGameplay(this));
 
         this.changeScene("Splash");
-
-        super.init();
-    }
-
-    /**
-     * Provides an opportunity for the app to process a command.
-     * 
-     * @param state {State} Current app state.
-     * @param command {Commmand} Issued command to process.
-     */
-    processCommand(state, command) {
-
-        return super.processCommand(state, command);
-    }
-
-    processFrame() {
-
-        let state = super.processFrame();
     }
 }
