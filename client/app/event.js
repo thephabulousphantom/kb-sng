@@ -1,9 +1,11 @@
 import ApplicationError from "../error/applicationError.js";
 import CallbackMissingError from "../error/callbackMissingError.js";
 
-class Event {
+export class Event {
 
     constructor() {
+
+        this.events = new Map();
     }
 
     /**
@@ -14,12 +16,12 @@ class Event {
      */
     register(eventName) {
 
-        if (events.has(eventName)) {
+        if (this.events.has(eventName)) {
 
             throw new ApplicationError(`Can't register event ${eventName}, it's already registered.`);
         }
 
-        events.set(eventName, new Array());
+        this.events.set(eventName, new Array());
     }
 
     /**
@@ -30,12 +32,12 @@ class Event {
      */
     unregister(eventName) {
 
-        if (!events.has(eventName)) {
+        if (!this.events.has(eventName)) {
 
             throw new ApplicationError(`Can't unregister unknown event ${eventName}.`);
         }
 
-        events.delete(eventName);
+        this.events.delete(eventName);
     }
 
     /**
@@ -46,12 +48,12 @@ class Event {
      */
     raise(eventName, data) {
 
-        if (!events.has(eventName)) {
+        if (!this.events.has(eventName)) {
 
             throw new ApplicationError(`Can't raise unknown event ${eventName}.`);
         }
 
-        let listeners = events.get(eventName);
+        let listeners = this.events.get(eventName);
 
         for (let i = 0; i < listeners.length; i++) {
 
@@ -69,7 +71,7 @@ class Event {
      */
     on(eventName, callback, context = this, state = undefined) {
 
-        if (!events.has(eventName)) {
+        if (!this.events.has(eventName)) {
 
             throw new ApplicationError(`Can't listen to unknown event ${eventName}.`);
         }
@@ -80,7 +82,7 @@ class Event {
         }
 
         let listener = {callback, context, state};
-        let listeners = events.get(eventName);
+        let listeners = this.events.get(eventName);
         listeners.push(listener);
     }
 
@@ -93,13 +95,13 @@ class Event {
      */
     off(eventName, callback, context = this, state = undefined) {
 
-        if (!events.has(eventName)) {
+        if (!this.events.has(eventName)) {
 
             throw new ApplicationError(`Can't stop listening to unknown event ${eventName}.`);
         }
 
         let removed = false;
-        let listeners = events.get(eventName);
+        let listeners = this.events.get(eventName);
         for (let i = 0; i < listeners.length; i++) {
 
             let listener = listeners[i];
@@ -114,9 +116,6 @@ class Event {
 
         return removed;
     }
-};
+}
 
-let events = new Map();
-let eventSingleton = new Event();
-
-export default eventSingleton;
+export let Global = new Event();

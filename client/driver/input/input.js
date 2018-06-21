@@ -1,5 +1,5 @@
 import Driver from "../driver.js";
-import Event from "../../app/event.js";
+import * as Event from "../../app/event.js";
 import Control from "../../control/control.js";
 
 export default class Input extends Driver {
@@ -18,7 +18,7 @@ export default class Input extends Driver {
 
         Input.all.set(control.getId(), control);
 
-        Event.raise("InputChanged", control);
+        Event.Global.raise("InputChanged", control);
     }
 
     /**
@@ -48,7 +48,7 @@ export default class Input extends Driver {
 
 Input.all = new Map();
 
-Event.register("InputChanged");
+Event.Global.register("InputChanged");
 
 /**
  * Gets a control.

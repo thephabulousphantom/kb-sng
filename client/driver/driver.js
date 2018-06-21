@@ -1,4 +1,5 @@
-import Event from "../app/event.js";
+import log from "../app/log.js";
+import * as Event from "../app/event.js";
 import DriverError from "../error/driverError.js";
 
 export default class Driver {
@@ -22,12 +23,14 @@ export default class Driver {
 
         if (Driver.all.has(this.name)) {
 
-            throw new DriverError(`Can't load driver ${this.name} - already loaded.`);
+            log.warn(`Can't load driver ${this.name} - already loaded.`);
+
+            return false;
         }
 
         Driver.all.set(this.name, this);
 
-        Event.raise("DriverLoaded", {
+        Event.Global.raise("DriverLoaded", {
             driver: this
         });
 
@@ -53,7 +56,7 @@ export default class Driver {
 
         Driver.all.delete(this.name);
 
-        Event.raise("DriverUnloaded", {
+        Event.Global.raise("DriverUnloaded", {
             driver: this
         });
 
@@ -63,5 +66,5 @@ export default class Driver {
 
 Driver.all = new Map();
 
-Event.register("DriverLoaded");
-Event.register("DriverUnloaded");
+Event.Global.register("DriverLoaded");
+Event.Global.register("DriverUnloaded");

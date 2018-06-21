@@ -1,25 +1,21 @@
-import App from "../app/app.js";
 import Scene from "../app/scene.js";
 import State from "../state/state.js";
 import Command from "../command/command.js";
 import * as Controls from "./controls.js";
 
-export default class SceneGameplay extends Scene {
+export default class SceneReady extends Scene {
 
     /**
-     * Constructs the SceneGameplay scene.
+     * Constructs the SceneReady scene.
      * 
      * @param app {App} Parent app that this scene belongs to.
      */
     constructor(app) {
 
-        super("Gameplay", app);
+        super("Ready", app);
 
         this.controls = {};
-        this.controls.PlayerLeftUp = new Controls.PlayerLeftUpControl();
-        this.controls.PlayerLeftDown = new Controls.PlayerLeftDownControl();
-        this.controls.PlayerRightUp = new Controls.PlayerRightUpControl();
-        this.controls.PlayerRightDown = new Controls.PlayerRightDownControl();
+        this.controls.Enter = new Controls.EnterControl();
     }
 
     /**
@@ -30,18 +26,13 @@ export default class SceneGameplay extends Scene {
     init(state) {
 
         super.init(state);
-        
-        document.body.innerHTML = "Gameplay.";
 
-        this.app.registerControl(this.controls.PlayerLeftUp);
-        this.app.registerControl(this.controls.PlayerLeftDown);
-        this.app.registerControl(this.controls.PlayerRightUp);
-        this.app.registerControl(this.controls.PlayerRightDown);
+        document.body.innerHTML = "Press Enter or Space to continue.";
+
+        this.app.registerControl(this.controls.Enter);
         this.app.bindControls({
-            "$-Key-W": this.controls.PlayerLeftUp,
-            "$-Key-S": this.controls.PlayerLeftDown,
-            "$-Key-I": this.controls.PlayerRightUp,
-            "$-Key-K": this.controls.PlayerRightDown
+            "$-Key-Enter": this.controls.Enter,
+            "$-Key-Space": this.controls.Enter
         });
 
         this.app.event.on("ControlChanged", this.onControlChanged, this);
@@ -56,18 +47,13 @@ export default class SceneGameplay extends Scene {
         super.cleanup(state);
 
         document.body.innerHTML = "";
-        
+
         this.app.event.off("ControlChanged", this.onControlChanged, this);
 
-        this.app.unregisterControl(this.controls.PlayerLeftUp);
-        this.app.unregisterControl(this.controls.PlayerLeftDown);
-        this.app.unregisterControl(this.controls.PlayerRightUp);
-        this.app.unregisterControl(this.controls.PlayerRightDown);
+        this.app.unregisterControl(this.controls.Enter);
         this.app.unbindControls({
-            "$-Key-W": this.controls.PlayerLeftUp,
-            "$-Key-S": this.controls.PlayerLeftDown,
-            "$-Key-I": this.controls.PlayerRightUp,
-            "$-Key-K": this.controls.PlayerRightDown
+            "$-Key-Enter": this.controls.Enter,
+            "$-Key-Space": this.controls.Enter
         });
     }
 
@@ -76,6 +62,16 @@ export default class SceneGameplay extends Scene {
         let state = data.state;
         let id = data.id;
         let value = data.value;
+
+        if (value) {
+
+            switch (id) {
+
+                case this.controls.Enter.getId():
+                    this.app.changeScene("Gameplay");
+                    break;
+            }
+        }
     }
 
     /**

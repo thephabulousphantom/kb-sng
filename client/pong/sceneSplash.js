@@ -1,6 +1,6 @@
 import App from "../app/app.js";
+import * as Event from "../app/event.js";
 import Scene from "../app/scene.js";
-import Event from "../app/event.js";
 import State from "../state/state.js";
 
 export default class SceneSplash extends Scene {
@@ -21,7 +21,7 @@ export default class SceneSplash extends Scene {
 
         document.body.innerHTML = "Welcome to PONG.";
 
-        Event.on("InputChanged", this.onInputChanged, this);
+        Event.Global.on("InputChanged", this.onInputChanged, this);
     }
 
     cleanup(state) {
@@ -30,7 +30,7 @@ export default class SceneSplash extends Scene {
 
         document.body.innerHTML = "";
         
-        Event.off("InputChanged", this.onInputChanged, this);
+        Event.Global.off("InputChanged", this.onInputChanged, this);
     }
 
     onInputChanged(control) {

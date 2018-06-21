@@ -1,5 +1,5 @@
 import log from "./log.js";
-import Event from "./event.js";
+import * as Event from "./event.js";
 import Scene from "./scene.js";
 
 import ApplicationError from "../error/applicationError.js";
@@ -36,6 +36,7 @@ export default class App {
         this.frameNumber = 0;
         this.rootEntity = new Entity("root");
         this.scenes = {};
+        this.event = new Event.Event();
         
         window.addEventListener("load", this.init.bind(this));
     }
@@ -71,13 +72,13 @@ export default class App {
 
         log.info("Initializing the app...");
 
-        Event.register("ControlRegistered");
-        Event.register("ControlUnregistered");
-        Event.register("ControlChanged");
+        this.event.register("ControlRegistered");
+        this.event.register("ControlUnregistered");
+        this.event.register("ControlChanged");
 
-        Event.on("DriverLoaded", this.onDriverLoaded, this);
-        Event.on("DriverUnloaded", this.onDriverUnloaded, this);
-        Event.on("InputChanged", this.onInputChanged, this);
+        Event.Global.on("DriverLoaded", this.onDriverLoaded, this);
+        Event.Global.on("DriverUnloaded", this.onDriverUnloaded, this);
+        Event.Global.on("InputChanged", this.onInputChanged, this);
 
         this._keyboard = new Keyboard();
         this._keyboard.load();
@@ -279,7 +280,7 @@ export default class App {
 
                     state._set(id, command.control.value);
 
-                    Event.raise( "ControlRegistered", {
+                    this.event.raise( "ControlRegistered", {
                         state: state,
                         id: id,
                         value: command.control.value
@@ -297,7 +298,7 @@ export default class App {
 
                     state._remove(id);
 
-                    Event.raise("ControlUnregistered", {
+                    this.event.raise("ControlUnregistered", {
                         state: state,
                         id: id
                     });
@@ -311,7 +312,7 @@ export default class App {
 
                     state._set(id, command.control.value);
 
-                    Event.raise("ControlChanged", {
+                    this.event.raise("ControlChanged", {
                         state: state,
                         id: id,
                         value: command.control.value,
