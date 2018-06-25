@@ -1,3 +1,4 @@
+import log from "./app/log.js";
 import * as Pong from "./pong/pong.js";
 import Server from "./network/server.js";
 import ServerConnectionLocal from "./network/serverConnectionLocal.js";
@@ -7,8 +8,10 @@ import Test from "./test/all.js";
 
 function main() {
 
+    log.level = log.severity.debug;
+
     let server = new Server(new Pong.PongApp(), new ServerConnectionLocal());
-    server.start(null); // source is not used by the local server connection, would be a local address / port to bind to normally.
+    server.start("local");
     server.app.run();
 
     let client = new Client(new Pong.PongApp(), new ClientConnectionLocal());

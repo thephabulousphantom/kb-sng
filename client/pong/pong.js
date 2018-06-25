@@ -16,28 +16,20 @@ export class PongApp extends App {
 
         super();
 
-        log.level = log.severity.debug;
-    }
-
-    init() {
-
         this.controls.Enter = new Controls.EnterControl();
         this.controls.PlayerLeftUp = new Controls.PlayerLeftUpControl();
         this.controls.PlayerLeftDown = new Controls.PlayerLeftDownControl();
         this.controls.PlayerRightUp = new Controls.PlayerRightUpControl();
         this.controls.PlayerRightDown = new Controls.PlayerRightDownControl();
 
-        this.registerControl(this.controls.Enter);
-        this.registerControl(this.controls.PlayerLeftUp);
-        this.registerControl(this.controls.PlayerLeftDown);
-        this.registerControl(this.controls.PlayerRightUp);
-        this.registerControl(this.controls.PlayerRightDown);
+        this.scenes.Splash = new SceneSplash(this);
+        this.scenes.Gameplay = new SceneGameplay(this);
+    }
 
-        this.registerScene(new SceneSplash(this));
-        this.registerScene(new SceneGameplay(this));
-
-        this.changeScene("Splash");
+    init() {
 
         super.init();
+
+        this.changeScene(this.scenes.Splash.name);
     }
 }

@@ -10,6 +10,16 @@ export default class ServerConnectionLocal extends ServerConnection {
         super();
     }
 
+    listen(source, clientHandler, messageHandler) {
+
+        if (source != "local") {
+
+            throw new ApplicationError("Local server connection can only listen to \"local\".");
+        }
+
+        super.listen(source, clientHandler, messageHandler);
+    }
+
     /**
      * Called by local client connection to connect to this server.
      * 

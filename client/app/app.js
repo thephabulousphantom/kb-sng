@@ -50,6 +50,16 @@ export default class App {
 
         this.event.raise("Initializing");
 
+        for (let controlId in this.controls) {
+
+            this.registerControl(this.controls[controlId]);
+        }
+
+        for (let sceneId in this.scenes) {
+
+            this.registerScene(this.scenes[sceneId]);
+        }
+
         this.initialized = true;
     }
 
@@ -76,14 +86,7 @@ export default class App {
 
         log.info(`Registering scene ${scene.name}...`);
 
-        if (this.scenes[scene.name] !== undefined) {
-
-            throw new ApplicationError(`Can't register scene ${scene.name} - it's already registered.`);
-        }
-
         this.event.raise("RegisteringScene", { scene });
-
-        this.scenes[scene.name] = scene;
     }
 
     /**

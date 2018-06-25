@@ -59,7 +59,7 @@ export default class Server {
      */
     onClient(clientInfo) {
 
-        log.info(`Client connected: ${clientInfo}`);
+        log.info(`Client connected: ${JSON.stringify(clientInfo)}`);
     }
 
     /**
@@ -92,5 +92,10 @@ export default class Server {
     receive(clientId, message) {
 
         log.debug(`Message received from the client ${clientId}: ${message}`);
+    }
+
+    toString() {
+
+        return `${this.constructor.name} using ${this.connection.constructor.name}`;
     }
 }

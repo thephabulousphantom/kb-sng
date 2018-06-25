@@ -131,7 +131,7 @@ export default class Client {
 
         this.clientId = this.connection.connect(target, this.receive);
 
-        log.info(`Joined ${target} server as ${this.clientId}`);
+        log.info(`Joined ${target.toString()} server as ${this.clientId}`);
     }
 
     /**
@@ -169,5 +169,10 @@ export default class Client {
     receive(message) {
 
         log.debug(`Received message from server: ${message}`);
+    }
+
+    toString() {
+
+        return `${this.constructor.name} using ${this.connection.constructor.name}`;
     }
 }
