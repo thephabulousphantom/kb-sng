@@ -14,13 +14,7 @@ import Entity from "../state/entity.js";
 
 import ModifyState from "../command/modifyState.js";
 import RegisterControl from "../command/registerControl.js";
-import UnregisterControl from "../command/unregisterControl.js";
-import ChangeControl from "../command/changeControl.js";
 import ChangeScene from "../command/changeScene.js";
-
-import Driver from "../driver/driver.js";
-import Input from "../driver/input/input.js";
-import Keyboard from "../driver/input/keyboard.js";
 
 export default class App {
 
@@ -28,62 +22,34 @@ export default class App {
 
         log.info("Constructing the app...");
 
-        this._controlBindings = {};
-        this._initialized = false;
+        this.initialized = false;
 
         this.running = false;
         this.frames = new FrameBuffer();
         this.frameNumber = 0;
         this.rootEntity = new Entity("root");
+        this.controls = {};
         this.scenes = {};
+
         this.event = new Event.Event();
-        
+        this.event.register("Initializing");
+        this.event.register("RegisteringControl");
+        this.event.register("RegisteringScene");
+        this.event.register("ChangingScene");
+        this.event.register("IssuingCommand");
+        this.event.register("ControlRegistered");
+        this.event.register("ControlChanged");
+
         window.addEventListener("load", this.init.bind(this));
-    }
-
-    bindControls(bindings) {
-
-        log.info("Binding controls:");
-
-        for (let id in bindings) {
-
-            let control = bindings[id];
-            this._controlBindings[id] = control;
-
-            log.info(`- ${id} translates to ${control.name}`);
-        }
-    }
-
-    unbindControls(bindings) {
-
-        log.info("Unbinding controls:");
-
-        for (let id in bindings) {
-
-            if (this._controlBindings[id]) {
-
-                log.info(`- ${id} no longer translates to ${this._controlBindings[id].name}`);
-                delete this._controlBindings[id];
-            }
-        }
     }
 
     init() {
 
         log.info("Initializing the app...");
 
-        this.event.register("ControlRegistered");
-        this.event.register("ControlUnregistered");
-        this.event.register("ControlChanged");
+        this.event.raise("Initializing");
 
-        Event.Global.on("DriverLoaded", this.onDriverLoaded, this);
-        Event.Global.on("DriverUnloaded", this.onDriverUnloaded, this);
-        Event.Global.on("InputChanged", this.onInputChanged, this);
-
-        this._keyboard = new Keyboard();
-        this._keyboard.load();
-
-        this._initialized = true;
+        this.initialized = true;
     }
 
     /**
@@ -95,19 +61,9 @@ export default class App {
 
         log.info(`Registering control ${control.name}...`);
 
+        this.event.raise("RegisteringControl", { control });
+
         this.issueCommand(new RegisterControl(control));
-    }
-
-    /**
-     * Unregisters a control for state tracking.
-     * 
-     * @param control {Control} Control to unregister.
-     */
-    unregisterControl(control) {
-
-        log.info(`Unregistering control ${control.name}...`);
-
-        this.issueCommand(new UnregisterControl(control));
     }
 
     /**
@@ -124,24 +80,9 @@ export default class App {
             throw new ApplicationError(`Can't register scene ${scene.name} - it's already registered.`);
         }
 
+        this.event.raise("RegisteringScene", { scene });
+
         this.scenes[scene.name] = scene;
-    }
-
-    /**
-     * Unregisters a scene, so that it can no longer be used in the app.
-     * 
-     * @param scene {Scene} Scene to unregister.
-     */
-    unregisterScene(scene) {
-
-        log.info(`Unregistering scene ${scene.name}...`);
-        
-        if (this.scenes[scene.name] === undefined) {
-
-            throw new ApplicationError(`Can't unregister scene ${scene.name} - it's not registered.`);
-        }
-
-        delete this.scenes[scene.name];
     }
 
     /**
@@ -153,55 +94,9 @@ export default class App {
 
         log.info(`Changing scene to ${name}...`);
         
+        this.event.raise("ChangingScene", { name });
+        
         this.issueCommand(new ChangeScene(name));
-    }
-
-    onDriverLoaded(data) {
-
-        log.info(`${data.driver.name} driver loaded.`);
-    }
-
-    onDriverUnloaded(data) {
-
-        log.info(`Driver ${data.driver.name} driver unloaded.`);
-    }
-
-    /**
-     * InputChanged event handler.
-     * 
-     * @param control {Control} Input control that was changed.
-     */
-    onInputChanged(control) {
-
-        let state = this.currentState();
-        if (state.has(control.getId())) {
-
-            this.issueCommand(new ChangeControl(control));
-        }
-
-        let appControl = this.translate(control);
-        if (appControl && state.has(appControl.getId())) {
-
-            this.issueCommand(new ChangeControl(appControl));
-        }
-    }
-
-    /**
-     * Translates a physical control into an app control.
-     * 
-     * @param control {Control} Physical control to translate.
-     */
-    translate(control) {
-
-        let id = control.getId();
-        let boundCommand = this._controlBindings[id];
-        if (boundCommand) {
-
-            boundCommand.value = control.value;
-            return boundCommand;
-        }
-
-        return undefined;
     }
 
     /**
@@ -215,6 +110,8 @@ export default class App {
 
             log.debug(`Command issued: ${JSON.stringify(command)}`);
         }
+
+        this.event.raise("IssuingCommand", { command });
         
         this.frames.issueCommand(this.frameNumber, command);
     }
@@ -250,7 +147,7 @@ export default class App {
             requestAnimationFrame(this.tick.bind(this));
         }
 
-        if (this._initialized) {
+        if (this.initialized) {
 
             this.processFrame();
         }
@@ -284,23 +181,6 @@ export default class App {
                         state: state,
                         id: id,
                         value: command.control.value
-                    });
-                }
-                break;
-
-            case "UnregisterControl":
-                {
-                    let id = command.control.getId();
-                    if (!state.has(id)) {
-
-                        throw new ApplicationError(`Application control ${id} not registered.`);
-                    }
-
-                    state._remove(id);
-
-                    this.event.raise("ControlUnregistered", {
-                        state: state,
-                        id: id
                     });
                 }
                 break;

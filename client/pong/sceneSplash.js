@@ -21,7 +21,7 @@ export default class SceneSplash extends Scene {
 
         document.body.innerHTML = "Welcome to PONG.";
 
-        Event.Global.on("InputChanged", this.onInputChanged, this);
+        this.app.event.on("ControlChanged", this.onControlChanged, this);
     }
 
     cleanup(state) {
@@ -29,15 +29,17 @@ export default class SceneSplash extends Scene {
         super.cleanup(state);
 
         document.body.innerHTML = "";
-        
-        Event.Global.off("InputChanged", this.onInputChanged, this);
+
+        this.app.event.off("ControlChanged", this.onControlChanged, this);
     }
 
-    onInputChanged(control) {
+    onControlChanged(data) {
 
-        if (control.value) {
+        switch (data.id) {
 
-            this.app.changeScene("Gameplay");
+            case "$-App-Enter":
+                this.app.changeScene("Gameplay");
+                break;
         }
     }
 

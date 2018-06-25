@@ -6,12 +6,11 @@ export default class DigitalControl extends Control {
      * 
      * @param name {String} Name of the control.
      * @param type {String} Type of the control.
-     * @param isLocal {Bool} Specifies whether this is local or global control; local controls are never propagated to other application instances.
      * @param value {Boolean} Initial value of the control.
      */
-    constructor(name, type, isLocal = true, value = false) {
+    constructor(name, type, value = false) {
 
-        super(name, type, isLocal)
+        super(name, type)
         
         this.value = !!value;
     }

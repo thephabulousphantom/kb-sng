@@ -2,7 +2,6 @@ import App from "../app/app.js";
 import Scene from "../app/scene.js";
 import State from "../state/state.js";
 import Command from "../command/command.js";
-import * as Controls from "./controls.js";
 
 export default class SceneGameplay extends Scene {
 
@@ -14,12 +13,6 @@ export default class SceneGameplay extends Scene {
     constructor(app) {
 
         super("Gameplay", app);
-
-        this.controls = {};
-        this.controls.PlayerLeftUp = new Controls.PlayerLeftUpControl();
-        this.controls.PlayerLeftDown = new Controls.PlayerLeftDownControl();
-        this.controls.PlayerRightUp = new Controls.PlayerRightUpControl();
-        this.controls.PlayerRightDown = new Controls.PlayerRightDownControl();
     }
 
     /**
@@ -32,17 +25,6 @@ export default class SceneGameplay extends Scene {
         super.init(state);
         
         document.body.innerHTML = "Gameplay.";
-
-        this.app.registerControl(this.controls.PlayerLeftUp);
-        this.app.registerControl(this.controls.PlayerLeftDown);
-        this.app.registerControl(this.controls.PlayerRightUp);
-        this.app.registerControl(this.controls.PlayerRightDown);
-        this.app.bindControls({
-            "$-Key-W": this.controls.PlayerLeftUp,
-            "$-Key-S": this.controls.PlayerLeftDown,
-            "$-Key-I": this.controls.PlayerRightUp,
-            "$-Key-K": this.controls.PlayerRightDown
-        });
 
         this.app.event.on("ControlChanged", this.onControlChanged, this);
     }
@@ -58,17 +40,6 @@ export default class SceneGameplay extends Scene {
         document.body.innerHTML = "";
         
         this.app.event.off("ControlChanged", this.onControlChanged, this);
-
-        this.app.unregisterControl(this.controls.PlayerLeftUp);
-        this.app.unregisterControl(this.controls.PlayerLeftDown);
-        this.app.unregisterControl(this.controls.PlayerRightUp);
-        this.app.unregisterControl(this.controls.PlayerRightDown);
-        this.app.unbindControls({
-            "$-Key-W": this.controls.PlayerLeftUp,
-            "$-Key-S": this.controls.PlayerLeftDown,
-            "$-Key-I": this.controls.PlayerRightUp,
-            "$-Key-K": this.controls.PlayerRightDown
-        });
     }
 
     onControlChanged(data) {
