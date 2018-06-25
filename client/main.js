@@ -12,6 +12,9 @@ function main() {
     server.app.run();
 
     let client = new Client(new Pong.PongApp(), new ClientConnectionLocal());
+    client.join(server);
+    client.app.run();
+
     client.app.event.on("Initializing", () => {
         client.bindControls({
             "$-Key-Space": client.app.controls.Enter,
@@ -22,8 +25,26 @@ function main() {
             "$-Key-K": client.app.controls.PlayerRightDown
         });
     });
-    client.join(server);
-    client.app.run();
+
+    let sceneNameContainer = document.createElement("div");
+    sceneNameContainer.id = "SceneNameContainer";
+    sceneNameContainer.style.position = "absolute";
+    sceneNameContainer.style.zIndex = 10000;
+    sceneNameContainer.style.left = 0;
+    sceneNameContainer.style.top = 0;
+    sceneNameContainer.style.margin = "4px";
+    sceneNameContainer.style.padding = "2px 6px 2px 6px";
+    sceneNameContainer.style.border = "1px solid #0A0";
+    sceneNameContainer.style.background = "#040";
+    sceneNameContainer.style.color = "#0F0";
+    sceneNameContainer.style.fontFamily = "monospace";
+    
+    document.body.appendChild(sceneNameContainer);
+
+    client.app.event.on("SceneChanged", (data) => {
+
+        sceneNameContainer.innerHTML = data.scene.name;
+    });
 
     client.send("Hello");
 }

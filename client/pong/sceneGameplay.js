@@ -24,8 +24,6 @@ export default class SceneGameplay extends Scene {
 
         super.init(state);
         
-        document.body.innerHTML = "Gameplay.";
-
         this.app.event.on("ControlChanged", this.onControlChanged, this);
     }
 
@@ -37,8 +35,6 @@ export default class SceneGameplay extends Scene {
 
         super.cleanup(state);
 
-        document.body.innerHTML = "";
-        
         this.app.event.off("ControlChanged", this.onControlChanged, this);
     }
 

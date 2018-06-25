@@ -19,16 +19,12 @@ export default class SceneSplash extends Scene {
 
         this.cutoffFrame = state.int("frame")||0 + this.cutOffSeconds * 60;
 
-        document.body.innerHTML = "Welcome to PONG.";
-
         this.app.event.on("ControlChanged", this.onControlChanged, this);
     }
 
     cleanup(state) {
 
         super.cleanup(state);
-
-        document.body.innerHTML = "";
 
         this.app.event.off("ControlChanged", this.onControlChanged, this);
     }

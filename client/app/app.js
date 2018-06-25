@@ -36,6 +36,7 @@ export default class App {
         this.event.register("RegisteringControl");
         this.event.register("RegisteringScene");
         this.event.register("ChangingScene");
+        this.event.register("SceneChanged");
         this.event.register("IssuingCommand");
         this.event.register("ControlRegistered");
         this.event.register("ControlChanged");
@@ -204,6 +205,7 @@ export default class App {
             case "ChangeScene":
                 {
                     let name = command.sceneName;
+                    let oldScene = null;
 
                     if(this.scenes[name] === undefined) {
 
@@ -212,12 +214,15 @@ export default class App {
 
                     if (state.string("scene")) {
 
-                        let currentScene = this.scenes[state.string("scene")];
-                        currentScene.cleanup(state);
+                        oldScene = this.scenes[state.string("scene")];
+                        oldScene.cleanup(state);
                     }
 
                     let scene = this.scenes[name];
                     scene.init(state);
+
+                    this.event.raise("SceneChanged", { scene, oldScene });
+                    
                 }
                 break;
         }
