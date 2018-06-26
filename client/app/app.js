@@ -4,16 +4,17 @@ import Scene from "./scene.js";
 
 import ApplicationError from "../error/applicationError.js";
 
-import Control from "../control/control.js";
-
 import State from "../state/state.js";
 import Frame from "../state/frame.js";
 import FrameBuffer from "../state/frameBuffer.js";
 import Property from "../state/property.js";
 import Entity from "../state/entity.js";
 
+import Control from "../control/control.js";
+
 import ModifyState from "../command/modifyState.js";
 import RegisterControl from "../command/registerControl.js";
+import ChangeControl from "../command/changeControl.js";
 import ChangeScene from "../command/changeScene.js";
 
 export default class App {
@@ -34,6 +35,7 @@ export default class App {
         this.event = new Event.Event();
         this.event.register("Initializing");
         this.event.register("RegisteringControl");
+        this.event.register("ChangingControl");
         this.event.register("RegisteringScene");
         this.event.register("ChangingScene");
         this.event.register("SceneChanged");
@@ -50,16 +52,6 @@ export default class App {
 
         this.event.raise("Initializing");
 
-        for (let controlId in this.controls) {
-
-            this.registerControl(this.controls[controlId]);
-        }
-
-        for (let sceneId in this.scenes) {
-
-            this.registerScene(this.scenes[sceneId]);
-        }
-
         this.initialized = true;
     }
 
@@ -74,7 +66,23 @@ export default class App {
 
         this.event.raise("RegisteringControl", { control });
 
+        this.controls[control.name] = control;
+
         this.issueCommand(new RegisterControl(control));
+    }
+
+    /**
+     * Changes a control state.
+     * 
+     * @param control {*} Control with changed state. 
+     */
+    changeControl(control) {
+
+        log.info(`Changing control ${control.name}...`);
+
+        this.event.raise("ChangingControl", { control });
+
+        this.issueCommand(new ChangeControl(control));
     }
 
     /**
@@ -87,6 +95,8 @@ export default class App {
         log.info(`Registering scene ${scene.name}...`);
 
         this.event.raise("RegisteringScene", { scene });
+
+        this.scenes[scene.name] = scene;
     }
 
     /**
@@ -199,6 +209,8 @@ export default class App {
                     this.event.raise("ControlChanged", {
                         state: state,
                         id: id,
+                        type: command.control.type,
+                        name: command.control.name,
                         value: command.control.value,
                         oldValue: oldValue
                     });

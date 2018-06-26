@@ -10,8 +10,6 @@ import Keyboard from "../driver/input/keyboard.js";
 
 import Control from "../control/control.js";
 
-import ChangeControl from "../command/changeControl.js";
-
 import ApplicationError from "../error/applicationError.js";
 import NotImplementedError from "../error/notImplementedError.js";
 
@@ -107,13 +105,13 @@ export default class Client {
         let state = this.app.currentState();
         if (state.has(control.getId())) {
 
-            this.app.issueCommand(new ChangeControl(control));
+            this.app.changeControl(control);
         }
 
-        let appControl = this.translate(control);
-        if (appControl && state.has(appControl.getId())) {
+        let translatedControl = this.translate(control);
+        if (translatedControl && state.has(translatedControl.getId())) {
 
-            this.app.issueCommand(new ChangeControl(appControl));
+            this.app.changeControl(translatedControl);
         }
     }
 

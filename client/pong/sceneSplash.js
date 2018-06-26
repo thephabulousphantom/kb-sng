@@ -31,11 +31,9 @@ export default class SceneSplash extends Scene {
 
     onControlChanged(data) {
 
-        switch (data.id) {
+        if (data.type == "App") {
 
-            case "$-App-Enter":
-                this.app.changeScene("Gameplay");
-                break;
+            this.app.changeScene("Gameplay");
         }
     }
 
