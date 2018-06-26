@@ -14,12 +14,72 @@ export default class Entity2d extends Entity {
 
         super(name, parent);
 
-        this.x = new Property(PropertyTypes.float, "x", this);
-        this.y = new Property(PropertyTypes.float, "y", this);
-        this.vx = new Property(PropertyTypes.float, "vx", this);
-        this.vy = new Property(PropertyTypes.float, "vy", this);
-        this.width = new Property(PropertyTypes.float, "w", this);
-        this.height = new Property(PropertyTypes.float, "h", this);
+        this._x = new Property(PropertyTypes.float, "x", this);
+        this._y = new Property(PropertyTypes.float, "y", this);
+        this._vx = new Property(PropertyTypes.float, "vx", this);
+        this._vy = new Property(PropertyTypes.float, "vy", this);
+        this._width = new Property(PropertyTypes.float, "w", this);
+        this._height = new Property(PropertyTypes.float, "h", this);
+    }
+
+    get x() {
+
+        return this._x.value();
+    }
+
+    set x(value) {
+
+        return this._x.value(value);
+    }
+
+    get y() {
+
+        return this._y.value();
+    }
+
+    set y(value) {
+
+        return this._y.value(value);
+    }
+
+    get vx() {
+
+        return this._vx.value();
+    }
+
+    set vx(value) {
+
+        return this._vx.value(value);
+    }
+
+    get vy() {
+
+        return this._vy.value();
+    }
+
+    set vy(value) {
+
+        return this._vy.value(value);
+    }
+
+    get width() {
+
+        return this._width.value();
+    }
+
+    set width(value) {
+
+        return this._width.value(value);
+    }
+
+    get height() {
+
+        return this._height.value();
+    }
+
+    set height(value) {
+
+        return this._height.value(value);
     }
 
     /**

@@ -1,3 +1,5 @@
+import PropertyTypes from "./propertyTypes.js";
+import Property from "./property.js";
 import Entity2D from "./entity2d.js";
 
 export default class EntityImage extends Entity2D {
@@ -13,6 +15,17 @@ export default class EntityImage extends Entity2D {
 
         super(name, parent);
 
-        this.url = url;
+        this._url = new Property(PropertyTypes.String, "url", this);
     }
+
+    get url() {
+
+        return this._url.value();
+    }
+
+    set url(value) {
+
+        return this._url.value(value);
+    }
+
 }

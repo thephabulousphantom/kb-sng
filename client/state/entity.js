@@ -3,6 +3,8 @@ import log from "../app/log.js";
 import PropertyTypes from "./propertyTypes.js";
 import Property from "./property.js";
 
+import Scene from "../app/scene.js";
+
 export default class Entity extends Property {
 
     /**
@@ -18,6 +20,7 @@ export default class Entity extends Property {
         super(PropertyTypes.string, name, parent);
 
         this._properties = null;
+        this._scene = null;
     }
 
     /**
@@ -37,7 +40,7 @@ export default class Entity extends Property {
     /**
      * Gets this entity's state (all properties) in the form of a JSON.
      */
-    getState() {
+    get state() {
 
         if (!this._properties) {
 
@@ -72,7 +75,7 @@ export default class Entity extends Property {
      * 
      * @param state {*} A JSON containing one or more properties to update.
      */
-    setState(state) {
+    set state(state) {
 
         if (!this._properties) {
 
@@ -100,5 +103,20 @@ export default class Entity extends Property {
                 this[property].value(state[property]);
             }
         }
+    }
+
+    get scene() {
+
+        if (!this._scene) {
+
+            return null;
+        }
+
+        return this._scene;
+    }
+
+    set scene(value) {
+
+        return this._scene = value;
     }
 }

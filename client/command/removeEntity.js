@@ -6,12 +6,12 @@ export default class RemoveEntity extends Command {
     /**
      * Constructs RemoveEntity command.
      * 
-     * @param entityName {String} Name of the entity to remove.
+     * @param entity {Entity} Entity to remove.
      */
-    constructor(entityName) {
+    constructor(entity) {
 
         super("RemoveEntity");
         
-        this.entityName = entityName;
+        this.entityUid = entity.uid;
     }
 }

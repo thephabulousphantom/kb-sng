@@ -52,7 +52,7 @@ export default class Property {
         this._children.delete(property.id);
     }
 
-    uid() {
+    get uid() {
 
         if (this._uid) {
 
@@ -114,11 +114,11 @@ export default class Property {
 
         switch (this.type) {
 
-            case PropertyTypes.bool: return Property.context.bool(this.uid(), value);
-            case PropertyTypes.int: return Property.context.int(this.uid(), value);
-            case PropertyTypes.float: return Property.context.float(this.uid(), value);
-            case PropertyTypes.string: return Property.context.string(this.uid(), value);
-            case PropertyTypes.JSON: return Property.context.JSON(this.uid(), value);
+            case PropertyTypes.bool: return Property.context.bool(this.uid, value);
+            case PropertyTypes.int: return Property.context.int(this.uid, value);
+            case PropertyTypes.float: return Property.context.float(this.uid, value);
+            case PropertyTypes.string: return Property.context.string(this.uid, value);
+            case PropertyTypes.JSON: return Property.context.JSON(this.uid, value);
         }
 
         return undefined;

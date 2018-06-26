@@ -12,10 +12,7 @@ export default class AddEntity extends Command {
 
         super("AddEntity");
         
-        // ### TODO: this command should somehow contain all entity
-        // properties, but can't hold entity as it has reference to
-        // parent entity. Alternatively, new event called UpdatedEntity
-        // or similar can be used to indicate the entity state.
-        this.entityName = entity.name;
+        this.entityUid = entity.uid;
+        this.entityState = entity.state;
     }
 }

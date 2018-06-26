@@ -75,12 +75,13 @@ export default class Scene {
      */
     addEntity(entity) {
 
-        if (this.entities[entity.name]) {
+        if (this.entities[entity.uid]) {
 
-            throw new ApplicationError(`Can't add entity ${entity.name}, it's already on the scene ${this.name}`);
+            throw new ApplicationError(`Can't add entity ${entity.uid}, it's already on the scene ${this.name}`);
         }
 
-        this.entities[entity.name] = entity;
+        entity.scene = this;
+        this.entities[entity.uid] = entity;
 
         this.app.issueCommand(new AddEntity(entity));
 
@@ -94,16 +95,17 @@ export default class Scene {
      */
     removeEntity(entity) {
 
-        if (!this.entities[entity.name]) {
+        if (!this.entities[entity.uid]) {
 
-            throw new ApplicationError(`Can't remove entity ${entity.name}, it's not on the scene ${this.name}`);
+            throw new ApplicationError(`Can't remove entity ${entity.uid}, it's not on the scene ${this.name}`);
         }
 
         this.app.issueCommand(new RemoveEntity(entity));
 
-        let removedEntity = this.entities[entity.name]; 
+        let removedEntity = this.entities[entity.uid]; 
+        removedEntity.scene = null;
 
-        delete this.entities[entity.name];
+        delete this.entities[entity.uid];
 
         return removedEntity;
     }

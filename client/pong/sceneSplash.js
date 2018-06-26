@@ -12,6 +12,8 @@ export default class SceneSplash extends Scene {
 
         this.cutOffSeconds = 10;
         this.cutoffFrame = null;
+
+        this.splash = this.addEntity(new EntityImage("/pong/splash.png", "Splash"));
     }
 
     init(state) {
@@ -22,11 +24,10 @@ export default class SceneSplash extends Scene {
 
         this.app.event.on("ControlChanged", this.onControlChanged, this);
 
-        let splash = this.addEntity(new EntityImage("/pong/splash.png", "Splash"));
-        splash.x.value(0);
-        splash.y.value(0);
-        splash.width.value(100);
-        splash.height.value(100);
+        this.splash.x = 0;
+        this.splash.y = 0;
+        this.splash.width = 100;
+        this.splash.height = 100;
     }
 
     cleanup(state) {
