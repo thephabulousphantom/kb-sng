@@ -1,8 +1,14 @@
 import log from "./log.js";
 
 import App from "./app.js";
+
+import ApplicationError from "../error/applicationError.js";
+
 import State from "../state/state.js";
+import Entity from "../state/entity.js";
 import Command from "../command/command.js";
+import AddEntity from "../command/addEntity.js";
+import RemoveEntity from "../command/removeEntity.js";
 
 export default class Scene {
 
@@ -17,6 +23,7 @@ export default class Scene {
 
         this.name = name;
         this.app = app;
+        this.entities = {};
     }
 
     /**
@@ -59,5 +66,60 @@ export default class Scene {
      */
     processFrame(state) {
 
+    }
+
+    /**
+     * Adds an entity to the scene.
+     * 
+     * @param entity {Entity} Entity to add to the scene. 
+     */
+    addEntity(entity) {
+
+        if (this.entities[entity.name]) {
+
+            throw new ApplicationError(`Can't add entity ${entity.name}, it's already on the scene ${this.name}`);
+        }
+
+        this.entities[entity.name] = entity;
+
+        this.app.issueCommand(new AddEntity(entity));
+
+        return entity;
+    }
+
+    /**
+     * Removes an entity from the scene.
+     * 
+     * @param entity {Entity} Entity to remove from the scene. 
+     */
+    removeEntity(entity) {
+
+        if (!this.entities[entity.name]) {
+
+            throw new ApplicationError(`Can't remove entity ${entity.name}, it's not on the scene ${this.name}`);
+        }
+
+        this.app.issueCommand(new RemoveEntity(entity));
+
+        let removedEntity = this.entities[entity.name]; 
+
+        delete this.entities[entity.name];
+
+        return removedEntity;
+    }
+
+    /**
+     * Gets an entity that was previous added, based on its name.
+     * @param name {String} Name of the entity to get.
+     * @returns {Entity} Entity.
+     */
+    getEntity(name) {
+
+        if (this.entities[name]) {
+
+            return this.entities[name];
+        }
+
+        return null;
     }
 }

@@ -2,6 +2,7 @@ import App from "../app/app.js";
 import * as Event from "../app/event.js";
 import Scene from "../app/scene.js";
 import State from "../state/state.js";
+import EntityImage from "../state/entityImage.js";
 
 export default class SceneSplash extends Scene {
 
@@ -20,6 +21,12 @@ export default class SceneSplash extends Scene {
         this.cutoffFrame = state.int("frame")||0 + this.cutOffSeconds * 60;
 
         this.app.event.on("ControlChanged", this.onControlChanged, this);
+
+        let splash = this.addEntity(new EntityImage("/pong/splash.png", "Splash"));
+        splash.x.value(0);
+        splash.y.value(0);
+        splash.width.value(100);
+        splash.height.value(100);
     }
 
     cleanup(state) {
