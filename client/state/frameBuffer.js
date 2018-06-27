@@ -69,18 +69,24 @@ export default class FrameBuffer {
     }
 
     /**
+     * Executes command on a specified frame number.
      * 
      * @param frameNumber {int} frameNumber of the frame to issue the command to.
      * @param command {Command} command to issue to the frame identified by frameNumber.
      */
-    issueCommand(frameNumber, command) {
+    execute(frameNumber, command) {
 
         let frame = this.get(frameNumber);
-        frame.issueCommand(command);
+        frame.execute(command);
 
         while (++frameNumber <= this.newest().frameNumber) {
 
-            // ### TODO: if command is byAuthority, probably all subsequent commands can safely be ignored too.
+            // ### TODO: if command is byAuthority, probably all subsequent commands
+            // can safely be ignored too.
+            
+            // ### TODO: Also, duplicate commands (from local client and remote server)
+            // might be sent for execution; this should be somehow taken into acoount.
+
             this.get(frameNumber).processed = false;
         }
     }

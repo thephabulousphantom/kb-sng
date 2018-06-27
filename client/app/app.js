@@ -38,7 +38,7 @@ export default class App {
         this.event.register("RegisteringScene");
         this.event.register("ChangingScene");
         this.event.register("SceneChanged");
-        this.event.register("IssuingCommand");
+        this.event.register("ExecutingCommand");
         this.event.register("ControlRegistered");
         this.event.register("ControlChanged");
 
@@ -94,7 +94,7 @@ export default class App {
 
         this.event.raise("ChangingControl", { control });
 
-        this.issueCommand(new ChangeControl(control));
+        this.execute(new ChangeControl(control));
     }
 
     /**
@@ -122,28 +122,24 @@ export default class App {
         
         this.event.raise("ChangingScene", { name });
         
-        this.issueCommand(new ChangeScene(name));
+        this.execute(new ChangeScene(name));
     }
 
     /**
      * Issues a command at current frame number.
      * 
-     * @param commmand {Command} Command to isssue.
-     * @param received {Boolean} When true, indicates that the message was received from authority and shouldn't be raised further.
+     * @param commmand {Command} Command to issue.
      */
-    issueCommand(command, received = false) {
+    execute(command) {
 
         if (log.level >= log.severity.debug) {
 
-            log.debug(`Command issued: ${JSON.stringify(command)}`);
+            log.debug(`Executing command: : ${JSON.stringify(command)}`);
         }
 
-        if (!received) {
-
-            this.event.raise("IssuingCommand", { command });
-        }
+        this.event.raise("ExecutingCommand", { command });
         
-        this.frames.issueCommand(this.frameNumber, command);
+        this.frames.execute(this.frameNumber, command);
     }
 
     /**

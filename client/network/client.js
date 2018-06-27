@@ -10,7 +10,7 @@ import Keyboard from "../driver/input/keyboard.js";
 
 import Control from "../control/control.js";
 import Command from "../command/command.js";
-import ChangeControl from "../command/ChangeControl.js";
+import ChangeControl from "../command/changeControl.js";
 
 import ApplicationError from "../error/applicationError.js";
 import NotImplementedError from "../error/notImplementedError.js";
@@ -126,7 +126,7 @@ export default class Client {
      */
     onControlChanged(data) {
 
-        if (!data.byAuthority) {
+        if (!data.byAuthority) { // byAuthority flag indicates that the command comes from the server, so no need to send it back.
 
             this.send({
                 type: "ControlChanged",
@@ -203,7 +203,7 @@ export default class Client {
                 control.value = message.data.value;
                 let command = new ChangeControl(control, true);
 
-                this.app.frames.issueCommand(frame, command);
+                this.app.frames.execute(frame, command);
                 break;
         }
     }

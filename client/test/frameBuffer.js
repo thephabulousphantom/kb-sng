@@ -22,13 +22,13 @@ export default function FrameBufferTest() {
 
         let frameBuffer = new FrameBuffer(3);
 
-        frameBuffer.issueCommand(1, new ModifyStateCommand("x", 1));
+        frameBuffer.execute(1, new ModifyStateCommand("x", 1));
 
         let state = frameBuffer.process(3, ModifyStateProcessor);
 
         Test.Assert(state._get("x") === 1, "Changes to a past frame must reflect to newer ones.");
 
-        frameBuffer.issueCommand(2, new ModifyStateCommand("x", 2));
+        frameBuffer.execute(2, new ModifyStateCommand("x", 2));
         
         state = frameBuffer.process(3, ModifyStateProcessor);
 

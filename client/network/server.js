@@ -103,7 +103,7 @@ export default class Server {
                 let control = this.app.controls[message.data.name];
                 control.value = message.data.value;
                 let command = new ChangeControl(control, true);
-                this.app.frames.issueCommand(frame, command);
+                this.app.frames.execute(frame, command);
                 this.connection.broadcast(message);
                 break;
         }

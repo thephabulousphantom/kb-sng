@@ -11,7 +11,7 @@ export default class Frame {
         this.previousFrame = previousFrame;
     }
 
-    issueCommand(command) {
+    execute(command) {
 
         this.commands.push(command);
 
