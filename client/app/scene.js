@@ -7,8 +7,6 @@ import ApplicationError from "../error/applicationError.js";
 import State from "../state/state.js";
 import Entity from "../state/entity.js";
 import Command from "../command/command.js";
-import AddEntity from "../command/addEntity.js";
-import RemoveEntity from "../command/removeEntity.js";
 
 export default class Scene {
 
@@ -83,8 +81,6 @@ export default class Scene {
         entity.scene = this;
         this.entities[entity.uid] = entity;
 
-        this.app.issueCommand(new AddEntity(entity));
-
         return entity;
     }
 
@@ -99,8 +95,6 @@ export default class Scene {
 
             throw new ApplicationError(`Can't remove entity ${entity.uid}, it's not on the scene ${this.name}`);
         }
-
-        this.app.issueCommand(new RemoveEntity(entity));
 
         let removedEntity = this.entities[entity.uid]; 
         removedEntity.scene = null;

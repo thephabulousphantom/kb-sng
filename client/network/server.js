@@ -1,6 +1,9 @@
 import log from "../app/log.js";
 import App from "../app/app.js";
 
+import Command from "../command/command.js";
+import ChangeControl from "../command/changeControl.js";
+
 import ServerConnection from "./serverConnection.js";
 
 import ApplicationError from "../error/applicationError.js";
@@ -32,7 +35,7 @@ export default class Server {
             throw new ApplicationError("Can't start, already running.");
         }
         
-        this.connection.listen(source, this.onClient, this.receive);
+        this.connection.listen(source, this.onClient, this.receive, this);
 
         log.info(`Started listening to the ${source}.`);
     }
@@ -92,6 +95,18 @@ export default class Server {
     receive(clientId, message) {
 
         log.debug(`Message received from the client ${clientId}: ${message}`);
+
+        switch (message.type) {
+
+            case "ControlChanged":
+                let frame = message.frame;
+                let control = this.app.controls[message.data.name];
+                control.value = message.data.value;
+                let command = new ChangeControl(control, true);
+                this.app.frames.issueCommand(frame, command);
+                this.connection.broadcast(message);
+                break;
+        }
     }
 
     toString() {

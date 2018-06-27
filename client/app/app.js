@@ -13,7 +13,6 @@ import Entity from "../state/entity.js";
 import Control from "../control/control.js";
 
 import ModifyState from "../command/modifyState.js";
-import RegisterControl from "../command/registerControl.js";
 import ChangeControl from "../command/changeControl.js";
 import ChangeScene from "../command/changeScene.js";
 
@@ -68,7 +67,20 @@ export default class App {
 
         this.controls[control.name] = control;
 
-        this.issueCommand(new RegisterControl(control));
+        let state = this.currentState();
+        let id = control.getId();
+        if (state.has(id)) {
+
+            throw new ApplicationError(`Application control ${id} already registered.`);
+        }
+
+        state._set(id, control.value);
+
+        this.event.raise( "ControlRegistered", {
+            state: state,
+            id: id,
+            value: control.value
+        });
     }
 
     /**
@@ -117,15 +129,19 @@ export default class App {
      * Issues a command at current frame number.
      * 
      * @param commmand {Command} Command to isssue.
+     * @param received {Boolean} When true, indicates that the message was received from authority and shouldn't be raised further.
      */
-    issueCommand(command) {
+    issueCommand(command, received = false) {
 
         if (log.level >= log.severity.debug) {
 
             log.debug(`Command issued: ${JSON.stringify(command)}`);
         }
 
-        this.event.raise("IssuingCommand", { command });
+        if (!received) {
+
+            this.event.raise("IssuingCommand", { command });
+        }
         
         this.frames.issueCommand(this.frameNumber, command);
     }
@@ -181,24 +197,6 @@ export default class App {
                 state._set(command.key, command.value);
                 break;
 
-            case "RegisterControl":
-                {
-                    let id = command.control.getId();
-                    if (state.has(id)) {
-
-                        throw new ApplicationError(`Application control ${id} already registered.`);
-                    }
-
-                    state._set(id, command.control.value);
-
-                    this.event.raise( "ControlRegistered", {
-                        state: state,
-                        id: id,
-                        value: command.control.value
-                    });
-                }
-                break;
-
             case "ChangeControl":
                 {
                     let id = command.control.getId();
@@ -211,8 +209,9 @@ export default class App {
                         id: id,
                         type: command.control.type,
                         name: command.control.name,
+                        byAuthority: command.byAuthority,
                         value: command.control.value,
-                        oldValue: oldValue
+                        oldValue: oldValue,
                     });
                 }
                 break;
@@ -237,7 +236,6 @@ export default class App {
                     scene.init(state);
 
                     this.event.raise("SceneChanged", { scene, oldScene });
-                    
                 }
                 break;
         }

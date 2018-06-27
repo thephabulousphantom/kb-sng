@@ -1,7 +1,14 @@
 export default class Command {
 
-    constructor(name) {
+    /**
+     * Constructs a command.
+     * 
+     * @param name {String} Command name 
+     * @param byAuthority {Boolean} Specifies whether the command was issued by authority.
+     */
+    constructor(name, byAuthority = false) {
 
         this.name = name;
+        this.byAuthority = byAuthority;
     }
 }

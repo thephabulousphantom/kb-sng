@@ -10,14 +10,14 @@ export default class ServerConnectionLocal extends ServerConnection {
         super();
     }
 
-    listen(source, clientHandler, messageHandler) {
+    listen(source, clientHandler, messageHandler, context) {
 
         if (source != "local") {
 
             throw new ApplicationError("Local server connection can only listen to \"local\".");
         }
 
-        super.listen(source, clientHandler, messageHandler);
+        super.listen(source, clientHandler, messageHandler, context);
     }
 
     /**
@@ -33,7 +33,7 @@ export default class ServerConnectionLocal extends ServerConnection {
         };
 
         this.clients.set(clientInfo.id, clientInfo);
-        this.clientHandler(clientInfo);
+        this.clientHandler.call(this.context, clientInfo);
 
         return clientInfo.id;
     }
@@ -68,6 +68,6 @@ export default class ServerConnectionLocal extends ServerConnection {
             throw new ApplicationError(`Can't receive from a non connected client ${clientId}.`)
         }
 
-        this.messageHandler(clientId, message);
+        this.messageHandler.call(this.context, clientId, message);
     }
 }

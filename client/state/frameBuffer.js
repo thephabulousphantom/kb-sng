@@ -80,6 +80,7 @@ export default class FrameBuffer {
 
         while (++frameNumber <= this.newest().frameNumber) {
 
+            // ### TODO: if command is byAuthority, probably all subsequent commands can safely be ignored too.
             this.get(frameNumber).processed = false;
         }
     }

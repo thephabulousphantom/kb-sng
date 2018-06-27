@@ -23,8 +23,9 @@ export default class ServerConnection {
      * @param source {*} Source to start listening for the connections from.
      * @param clientHandler {function} Callback to be called once a new client connects.
      * @param messageHandler {function} Callback to be called once a new message is received from one of the connected clients.
+     * @param context {*} context to set "this" to when invoking callbacks.
      */
-    listen(source, clientHandler, messageHandler) {
+    listen(source, clientHandler, messageHandler, context) {
 
         if (this.listening) {
 
@@ -34,6 +35,7 @@ export default class ServerConnection {
         this.source = source;
         this.clientHandler = clientHandler;
         this.messageHandler = messageHandler;
+        this.context = context;
         this.listening = true;
     }
 
@@ -50,6 +52,7 @@ export default class ServerConnection {
         this.source = null;
         this.clientHandler = null;
         this.messageHandler = null;
+        this.context = null;
         this.listening = false;
     }
 
@@ -75,7 +78,7 @@ export default class ServerConnection {
         let clientInfo = null;
         while (clientInfo = clientIterator.next().value) {
 
-            send(clientInfo.id, message);
+            this.send(clientInfo.id, message);
         }
     }
 

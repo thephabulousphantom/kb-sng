@@ -17,7 +17,7 @@ export default class ClientConnectionLocal extends ClientConnection {
      * @param target {ServerConnectionLocal} Server to connect to. 
      * @param messageHandler {function} Callback to be called once a message is received from the server.
      */
-    connect(target, messageHandler) {
+    connect(target, messageHandler, context) {
 
         if (!(target instanceof Server) || !(target.connection instanceof ServerConnectionLocal)) {
 
@@ -27,7 +27,7 @@ export default class ClientConnectionLocal extends ClientConnection {
         this.clientId = target.connection.connect(this);
         this.target = target;
 
-        super.connect(target, messageHandler);
+        super.connect(target, messageHandler, context);
 
         return this.clientId;
     }
@@ -51,7 +51,7 @@ export default class ClientConnectionLocal extends ClientConnection {
 
         if (this.messageHandler) {
 
-            this.messageHandler(message);
+            this.messageHandler.call(this.context, message);
         }
     }
 }

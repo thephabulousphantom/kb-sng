@@ -9,6 +9,8 @@ import Input from "../driver/input/input.js";
 import Keyboard from "../driver/input/keyboard.js";
 
 import Control from "../control/control.js";
+import Command from "../command/command.js";
+import ChangeControl from "../command/ChangeControl.js";
 
 import ApplicationError from "../error/applicationError.js";
 import NotImplementedError from "../error/notImplementedError.js";
@@ -49,6 +51,8 @@ export default class Client {
         Event.Global.on("DriverLoaded", this.onDriverLoaded, this);
         Event.Global.on("DriverUnloaded", this.onDriverUnloaded, this);
         Event.Global.on("InputChanged", this.onInputChanged, this);
+
+        this.app.event.on("ControlChanged", this.onControlChanged, this);
 
         this.keyboard = new Keyboard();
         this.keyboard.load();
@@ -116,6 +120,29 @@ export default class Client {
     }
 
     /**
+     * Handles ControlChanged application event by forwarding it to server.
+     * 
+     * @param data {*} Application state and control details. 
+     */
+    onControlChanged(data) {
+
+        if (!data.byAuthority) {
+
+            this.send({
+                type: "ControlChanged",
+                data: {
+                    frame: data.state.int("frame"),
+                    id: data.id,
+                    type: data.type,
+                    name: data.name,
+                    value: data.value,
+                    oldValue: data.oldValue
+                }
+            });
+        }
+    }
+
+    /**
      * Joins a running server.
      * 
      * @param target {*} Target server to join.
@@ -127,7 +154,7 @@ export default class Client {
             throw new ApplicationError("Can't join, already in a game. Leave the current game first.")
         }
 
-        this.clientId = this.connection.connect(target, this.receive);
+        this.clientId = this.connection.connect(target, this.receive, this);
 
         log.info(`Joined ${target.toString()} server as ${this.clientId}`);
     }
@@ -167,6 +194,18 @@ export default class Client {
     receive(message) {
 
         log.debug(`Received message from server: ${message}`);
+
+        switch (message.type) {
+
+            case "ControlChanged":
+                let frame = message.data.frame;
+                let control = this.app.controls[message.data.name];
+                control.value = message.data.value;
+                let command = new ChangeControl(control, true);
+
+                this.app.frames.issueCommand(frame, command);
+                break;
+        }
     }
 
     toString() {

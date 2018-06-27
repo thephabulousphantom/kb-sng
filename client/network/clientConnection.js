@@ -12,6 +12,7 @@ export default class ClientConnection {
         this.connected = false;
         this.clientId = null;
         this.messageHandler = null;
+        this.context = null;
         this.target = null;
     }
 
@@ -21,7 +22,7 @@ export default class ClientConnection {
      * @param target {*} Server to connect to.
      * @param messageHandler {function} Callback to be invoked one a message is received from the server.
      */
-    connect(target, messageHandler) {
+    connect(target, messageHandler, context) {
 
         if (this.connected) {
 
@@ -30,6 +31,7 @@ export default class ClientConnection {
 
         this.target = target;
         this.messageHandler = messageHandler;
+        this.context = context;
         this.connected = true;
 
         return undefined;
@@ -47,6 +49,7 @@ export default class ClientConnection {
 
         this.target = null;
         this.messageHandler = null;
+        this.context = null;
         this.connected = false;
     }
 
