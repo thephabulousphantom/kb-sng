@@ -1,3 +1,4 @@
+import log from "../app/log.js";
 import Frame from "./frame.js";
 import FrameBufferError from "../error/frameBufferError.js";
 import Command from "../command/command.js";
@@ -76,6 +77,11 @@ export default class FrameBuffer {
      */
     execute(frameNumber, command) {
 
+        if (log.level >= log.severity.debug) {
+
+            log.debug(`Executing command: ${JSON.stringify(command)} @ frame ${frameNumber}`);
+        }
+
         let frame = this.get(frameNumber);
         frame.execute(command);
 
@@ -83,7 +89,7 @@ export default class FrameBuffer {
 
             // ### TODO: if command is byAuthority, probably all subsequent commands
             // can safely be ignored too.
-            
+
             // ### TODO: Also, duplicate commands (from local client and remote server)
             // might be sent for execution; this should be somehow taken into acoount.
 

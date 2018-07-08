@@ -13,6 +13,52 @@ export default class Frame {
 
     execute(command) {
 
+        // ### TODO: think about completely separating
+        // authority and local state. For now, keep just one
+        // and maintain byAuthority flag to separate commands
+        // that we've issued but server hasn't yet confirmed
+        // them and the ones that have come from the server.
+        // 
+        // if executing a command from the authority (server),
+        // check if we're the ones who've issued it - in which
+        // case old command should just be marked as validated
+        // by the authority instead of processed - otherwise,
+        // process command normally.
+        //
+        // ### TODO: make sure that commands are always processed
+        // in the right order. 
+
+        if (command.byAuthority) {
+
+            for (let i = 0; i < this.commands.length; i++) {
+
+                let existingCommand = this.commands[i];
+                if (existingCommand.name == command.name && existingCommand.byAuthority == false) {
+
+                    let theSame = true;
+                    for (let property in existingCommand) {
+
+                        if (property == "name" || property == "byAuthority") {
+
+                            continue;
+                        }
+
+                        theSame = theSame & existingCommand[property] == command[property];
+                        if (!theSame) {
+
+                            break;
+                        }
+                    }
+
+                    if (theSame) {
+
+                        existingCommand.byAuthority = true;
+                        return;
+                    }
+                }
+            }
+        }
+
         this.commands.push(command);
 
         this.processed = false;
@@ -28,6 +74,7 @@ export default class Frame {
         if (this.previousFrame) {
 
             this.state = new State(this.previousFrame.state);
+            this.state.int("frame", this.frameNumber);
         }
 
         for (let i = 0; i < this.commands.length; i++) {

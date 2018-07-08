@@ -154,6 +154,7 @@ export default class Client {
             throw new ApplicationError("Can't join, already in a game. Leave the current game first.")
         }
 
+        // ### TODO: this needs to be async
         this.clientId = this.connection.connect(target, this.receive, this);
 
         log.info(`Joined ${target.toString()} server as ${this.clientId}`);
@@ -181,7 +182,7 @@ export default class Client {
      */
     send(message) {
 
-        log.debug(`Sending message to server: ${message}`);
+        log.debug(`Client ${this.clientId} sending message to server: ${JSON.stringify(message)}`);
 
         this.connection.send(message);
     }
@@ -193,7 +194,7 @@ export default class Client {
      */
     receive(message) {
 
-        log.debug(`Received message from server: ${message}`);
+        log.debug(`Client ${this.clientId} received message from server: ${JSON.stringify(message)}`);
 
         switch (message.type) {
 

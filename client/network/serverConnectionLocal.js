@@ -52,7 +52,11 @@ export default class ServerConnectionLocal extends ServerConnection {
         }
 
         let clientInfo = this.clients.get(clientId);
-        clientInfo.info.receive(message);
+
+        setTimeout(() => {
+
+            clientInfo.info.receive(message);
+        }, 0);
     }
 
     /**

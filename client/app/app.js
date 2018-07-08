@@ -134,7 +134,7 @@ export default class App {
 
         if (log.level >= log.severity.debug) {
 
-            log.debug(`Executing command: : ${JSON.stringify(command)}`);
+            log.debug(`Executing command: ${JSON.stringify(command)}`);
         }
 
         this.event.raise("ExecutingCommand", { command });
@@ -187,60 +187,72 @@ export default class App {
      */
     processCommand(state, command) {
 
-        switch (command.name) {
+        let originalFrameNumber = this.frameNumber;
 
-            case "ModifyState":
-                state._set(command.key, command.value);
-                break;
+        try {
 
-            case "ChangeControl":
-                {
-                    let id = command.control.getId();
-                    let oldValue = state._get(id);
+            this.frameNumber = state.int("frame");
+            
+            switch (command.name) {
 
-                    state._set(id, command.control.value);
+                case "ModifyState":
+                    state._set(command.key, command.value);
+                    break;
 
-                    this.event.raise("ControlChanged", {
-                        state: state,
-                        id: id,
-                        type: command.control.type,
-                        name: command.control.name,
-                        byAuthority: command.byAuthority,
-                        value: command.control.value,
-                        oldValue: oldValue,
-                    });
-                }
-                break;
+                case "ChangeControl":
+                    {
+                        let id = command.control.getId();
+                        let oldValue = state._get(id);
 
-            case "ChangeScene":
-                {
-                    let name = command.sceneName;
-                    let oldScene = null;
+                        state._set(id, command.control.value);
 
-                    if(this.scenes[name] === undefined) {
-
-                        throw new ApplicationError(`Can't switch to unknown scene ${name}.`);
+                        this.event.raise("ControlChanged", {
+                            state: state,
+                            id: id,
+                            type: command.control.type,
+                            name: command.control.name,
+                            byAuthority: command.byAuthority,
+                            value: command.control.value,
+                            oldValue: oldValue,
+                        });
                     }
+                    break;
 
-                    if (state.string("scene")) {
+                case "ChangeScene":
+                    {
+                        let name = command.sceneName;
+                        let oldScene = null;
 
-                        oldScene = this.scenes[state.string("scene")];
-                        oldScene.cleanup(state);
+                        if(this.scenes[name] === undefined) {
+
+                            throw new ApplicationError(`Can't switch to unknown scene ${name}.`);
+                        }
+
+                        if (state.string("scene")) {
+
+                            oldScene = this.scenes[state.string("scene")];
+                            oldScene.cleanup(state);
+                        }
+
+                        let scene = this.scenes[name];
+                        scene.init(state);
+
+                        this.event.raise("SceneChanged", { scene, oldScene });
                     }
+                    break;
+            }
 
-                    let scene = this.scenes[name];
-                    scene.init(state);
+            if (state.string("scene")) {
 
-                    this.event.raise("SceneChanged", { scene, oldScene });
-                }
-                break;
+                let scene = this.scenes[state.string("scene")];
+
+                scene.processCommand(state, command);
+            }
+
         }
+        finally {
 
-        if (state.string("scene")) {
-
-            let scene = this.scenes[state.string("scene")];
-
-            scene.processCommand(state, command);
+            this.frameNumber = originalFrameNumber;
         }
     }
 

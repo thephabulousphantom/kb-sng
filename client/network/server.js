@@ -94,12 +94,12 @@ export default class Server {
      */
     receive(clientId, message) {
 
-        log.debug(`Message received from the client ${clientId}: ${message}`);
+        log.debug(`Message received from the client ${clientId}: ${JSON.stringify(message)}`);
 
         switch (message.type) {
 
             case "ControlChanged":
-                let frame = message.frame;
+                let frame = message.data.frame;
                 let control = this.app.controls[message.data.name];
                 control.value = message.data.value;
                 let command = new ChangeControl(control, true);

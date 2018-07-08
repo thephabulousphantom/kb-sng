@@ -39,7 +39,10 @@ export default class ClientConnectionLocal extends ClientConnection {
      */
     send(message) {
 
-        this.target.connection.receive(this.clientId, message);
+        setTimeout(() => {
+
+            this.target.connection.receive(this.clientId, message);
+        }, 0);
     }
 
     /**
