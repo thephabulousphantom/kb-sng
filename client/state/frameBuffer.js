@@ -1,7 +1,9 @@
-import log from "../app/log.js";
+import Log from "../app/log.js";
 import Frame from "./frame.js";
 import FrameBufferError from "../error/frameBufferError.js";
 import Command from "../command/command.js";
+
+let log = new Log("FrameBuffer");
 
 export default class FrameBuffer {
 
@@ -77,7 +79,7 @@ export default class FrameBuffer {
      */
     execute(frameNumber, command) {
 
-        if (log.level >= log.severity.debug) {
+        if (log.level >= Log.severity.debug) {
 
             log.debug(`Executing command: ${JSON.stringify(command)} @ frame ${frameNumber}`);
         }

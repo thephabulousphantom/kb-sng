@@ -1,4 +1,3 @@
-import log from "../app/log.js";
 import * as Test from "./test.js";
 import State from "../state/state.js";
 import Frame from "../state/frame.js";

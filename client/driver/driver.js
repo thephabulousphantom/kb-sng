@@ -1,4 +1,4 @@
-import log from "../app/log.js";
+import Log from "../app/log.js";
 import * as Event from "../app/event.js";
 import DriverError from "../error/driverError.js";
 
@@ -6,6 +6,8 @@ export default class Driver {
 
     constructor(name = "Driver") {
         
+        this.log = new Log("Driver:" + name);
+
         this.name = name;
     }
 
@@ -23,7 +25,7 @@ export default class Driver {
 
         if (Driver.all.has(this.name)) {
 
-            log.warn(`Can't load driver ${this.name} - already loaded.`);
+            this.log.warn(`Can't load driver ${this.name} - already loaded.`);
 
             return false;
         }

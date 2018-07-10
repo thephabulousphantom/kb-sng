@@ -1,9 +1,11 @@
-import log from "../app/log.js";
+import Log from "../app/log.js";
 
 import PropertyTypes from "./propertyTypes.js";
 import Property from "./property.js";
 
 import Scene from "../app/scene.js";
+
+let log = new Log("Entity");
 
 export default class Entity extends Property {
 

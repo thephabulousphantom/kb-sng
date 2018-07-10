@@ -6,6 +6,8 @@ export default class Keyboard extends Input {
     constructor(name = "Keyboard") {
 
         super(name);
+
+        this._currentlyDown = {};
     }
 
     onLoad() {
@@ -26,11 +28,22 @@ export default class Keyboard extends Input {
 
     onKeyDown(evt) {
 
-        super.change(new KeyControl(evt.key, evt.keyCode, true))
+        let control = new KeyControl(evt.key, evt.keyCode, true);
+        if (this._currentlyDown[control.name]) {
+
+            return;
+        }
+
+        this._currentlyDown[control.name] = true;
+
+        super.change(control);
     }
 
     onKeyUp(evt) {
 
-        super.change(new KeyControl(evt.key, evt.keyCode, false))
+        let control = new KeyControl(evt.key, evt.keyCode, false);
+        delete this._currentlyDown[control.name];
+        
+        super.change(control);
     }
 }

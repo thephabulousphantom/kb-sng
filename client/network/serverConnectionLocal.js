@@ -1,4 +1,3 @@
-import log from "../app/log.js";
 import ApplicationError from "../error/applicationError.js";
 import ServerConnection from "./serverConnection.js";
 import ClientConnectionLocal from "./clientConnectionLocal.js";

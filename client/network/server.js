@@ -1,4 +1,3 @@
-import log from "../app/log.js";
 import App from "../app/app.js";
 
 import Command from "../command/command.js";
@@ -37,7 +36,7 @@ export default class Server {
         
         this.connection.listen(source, this.onClient, this.receive, this);
 
-        log.info(`Started listening to the ${source}.`);
+        this.app.log.info(`Started listening to the ${source}.`);
     }
 
     /**
@@ -52,7 +51,7 @@ export default class Server {
 
         this.connection.stopListening();
 
-        log.info("Stopped listening.");
+        this.app.log.info("Stopped listening.");
     }
 
     /**
@@ -62,7 +61,7 @@ export default class Server {
      */
     onClient(clientInfo) {
 
-        log.info(`Client connected: ${JSON.stringify(clientInfo)}`);
+        this.app.log.info(`Client connected: ${JSON.stringify(clientInfo)}`);
     }
 
     /**
@@ -94,14 +93,17 @@ export default class Server {
      */
     receive(clientId, message) {
 
-        log.debug(`Message received from the client ${clientId}: ${JSON.stringify(message)}`);
+        this.app.log.debug(`Message received from the client ${clientId}: ${JSON.stringify(message)}`);
 
         switch (message.type) {
 
             case "ControlChanged":
                 let frame = message.data.frame;
-                let control = this.app.controls[message.data.name];
+
+                // "clone" Control of the app, change it's value
+                let control = this.app.controls[message.data.name].clone();
                 control.value = message.data.value;
+                
                 let command = new ChangeControl(control, true);
                 this.app.frames.execute(frame, command);
                 this.connection.broadcast(message);

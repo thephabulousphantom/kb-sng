@@ -19,6 +19,21 @@ export default class Control {
 
         return `$-${this.type}-${this.name}`;
     }
+
+    clone() {
+
+        let clone = new Control();
+        
+        clone.name = this.name;
+        clone.type = this.type;
+        
+        return clone;
+    }
+
+    toString() {
+
+        return JSON.stringify(this);
+    }
 }
 
 /**

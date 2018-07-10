@@ -1,4 +1,4 @@
-import log from "./log.js";
+import Log from "./log.js";
 import * as Event from "./event.js";
 import Scene from "./scene.js";
 
@@ -18,9 +18,16 @@ import ChangeScene from "../command/changeScene.js";
 
 export default class App {
 
-    constructor() {
+    /**
+     * Constructs an App instance.
+     * 
+     * @param name {String} Name of the app instance, to be used in logging. 
+     */
+    constructor(name = "App") {
 
-        log.info("Constructing the app...");
+        this.log = new Log(name);
+
+        this.log.info("Constructing the app...");
 
         this.initialized = false;
 
@@ -47,7 +54,7 @@ export default class App {
 
     init() {
 
-        log.info("Initializing the app...");
+        this.log.info("Initializing the app...");
 
         this.event.raise("Initializing");
 
@@ -61,7 +68,7 @@ export default class App {
      */
     registerControl(control) {
 
-        log.info(`Registering control ${control.name}...`);
+        this.log.info(`Registering control ${control.name}...`);
 
         this.event.raise("RegisteringControl", { control });
 
@@ -90,7 +97,7 @@ export default class App {
      */
     changeControl(control) {
 
-        log.info(`Changing control ${control.name}...`);
+        this.log.info(`Changing control ${control.name}...`);
 
         this.event.raise("ChangingControl", { control });
 
@@ -104,7 +111,7 @@ export default class App {
      */
     registerScene(scene) {
 
-        log.info(`Registering scene ${scene.name}...`);
+        this.log.info(`Registering scene ${scene.name}...`);
 
         this.event.raise("RegisteringScene", { scene });
 
@@ -118,7 +125,7 @@ export default class App {
      */
     changeScene(name) {
 
-        log.info(`Changing scene to ${name}...`);
+        this.log.info(`Changing scene to ${name}...`);
         
         this.event.raise("ChangingScene", { name });
         
@@ -132,9 +139,9 @@ export default class App {
      */
     execute(command) {
 
-        if (log.level >= log.severity.debug) {
+        if (this.log.level >= Log.severity.debug) {
 
-            log.debug(`Executing command: ${JSON.stringify(command)}`);
+            this.log.debug(`Executing command: ${JSON.stringify(command)}`);
         }
 
         this.event.raise("ExecutingCommand", { command });
@@ -147,7 +154,7 @@ export default class App {
      */
     run() {
 
-        log.info("Running the app...");
+        this.log.info("Running the app...");
 
         this.running = true;
         this.tick();
@@ -158,7 +165,7 @@ export default class App {
      */
     stop() {
 
-        log.info("Stopping the app...");
+        this.log.info("Stopping the app...");
 
         this.running = false;
     }

@@ -1,4 +1,3 @@
-import log from "../app/log.js";
 import ApplicationError from "../error/applicationError.js";
 
 let nextClientId = 0;

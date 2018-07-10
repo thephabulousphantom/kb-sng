@@ -1,4 +1,3 @@
-import log from "../app/log.js";
 import ApplicationError from "../error/applicationError.js";
 import NotImplementedError from "../error/notImplementedError.js";
 

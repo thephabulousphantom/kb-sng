@@ -14,4 +14,15 @@ export default class DigitalControl extends Control {
         
         this.value = !!value;
     }
+
+    clone() {
+
+        let clone = new DigitalControl();
+
+        clone.name = this.name;
+        clone.type = this.type;
+        clone.value = this.value;
+
+        return clone;
+    }
 }

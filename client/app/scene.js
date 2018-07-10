@@ -1,5 +1,3 @@
-import log from "./log.js";
-
 import App from "./app.js";
 
 import ApplicationError from "../error/applicationError.js";
@@ -17,7 +15,7 @@ export default class Scene {
      */
     constructor(name, app) {
 
-        log.info(`Constructing scene ${name}...`);
+        app.log.info(`Constructing scene ${name}...`);
 
         this.name = name;
         this.app = app;
@@ -31,7 +29,7 @@ export default class Scene {
      */
     init(state) {
 
-        log.info(`Initializing scene ${this.name}...`);
+        this.app.log.info(`Initializing scene ${this.name}...`);
         
         state.string("scene", this.name);
     }
@@ -42,7 +40,7 @@ export default class Scene {
      */
     cleanup(state) {
 
-        log.info(`Cleaning up scene ${this.name}...`);
+        this.app.log.info(`Cleaning up scene ${this.name}...`);
         
         state.string("scene", null);
     }

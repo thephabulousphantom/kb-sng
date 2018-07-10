@@ -1,4 +1,3 @@
-import log from "../app/log.js";
 import App from "../app/app.js";
 import * as Event from "../app/event.js";
 
@@ -60,24 +59,24 @@ export default class Client {
 
     onDriverLoaded(data) {
 
-        log.info(`${data.driver.name} driver loaded.`);
+        this.app.log.info(`${data.driver.name} driver loaded.`);
     }
 
     onDriverUnloaded(data) {
 
-        log.info(`Driver ${data.driver.name} driver unloaded.`);
+        this.app.log.info(`Driver ${data.driver.name} driver unloaded.`);
     }
 
     bindControls(bindings) {
 
-        log.info("Binding controls:");
+        this.app.log.info("Binding controls:");
 
         for (let id in bindings) {
 
             let control = bindings[id];
             this._controlBindings[id] = control;
 
-            log.info(`- ${id} translates to ${control.name}`);
+            this.app.log.info(`- ${id} translates to ${control.name}`);
         }
     }
 
@@ -92,6 +91,7 @@ export default class Client {
         let translatedControl = this._controlBindings[id];
         if (translatedControl) {
 
+            translatedControl = translatedControl.clone();
             translatedControl.value = control.value;
             return translatedControl;
         }
@@ -157,7 +157,7 @@ export default class Client {
         // ### TODO: this needs to be async
         this.clientId = this.connection.connect(target, this.receive, this);
 
-        log.info(`Joined ${target.toString()} server as ${this.clientId}`);
+        this.app.log.info(`Joined ${target.toString()} server as ${this.clientId}`);
     }
 
     /**
@@ -172,7 +172,7 @@ export default class Client {
 
         this.connection.disconnect();
 
-        log.info("Left the server.");
+        this.app.log.info("Left the server.");
     }
 
     /**
@@ -182,7 +182,7 @@ export default class Client {
      */
     send(message) {
 
-        log.debug(`Client ${this.clientId} sending message to server: ${JSON.stringify(message)}`);
+        this.app.log.debug(`Client ${this.clientId} sending message to server: ${JSON.stringify(message)}`);
 
         this.connection.send(message);
     }
@@ -194,14 +194,17 @@ export default class Client {
      */
     receive(message) {
 
-        log.debug(`Client ${this.clientId} received message from server: ${JSON.stringify(message)}`);
+        this.app.log.debug(`Client ${this.clientId} received message from server: ${JSON.stringify(message)}`);
 
         switch (message.type) {
 
             case "ControlChanged":
                 let frame = message.data.frame;
-                let control = this.app.controls[message.data.name];
+                
+                // "clone" Control of the app, change it's value
+                let control = this.app.controls[message.data.name].clone();
                 control.value = message.data.value;
+
                 let command = new ChangeControl(control, true);
 
                 this.app.frames.execute(frame, command);

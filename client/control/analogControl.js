@@ -14,4 +14,15 @@ export default class AnalogControl extends Control {
         
         this.value = 1.0 * value;
     }
+
+    clone() {
+
+        let clone = new AnalogControl();
+
+        clone.name = this.name;
+        clone.type = this.type;
+        clone.value = this.value;
+
+        return clone;
+    }
 }

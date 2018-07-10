@@ -1,5 +1,7 @@
-import log from "../app/log.js";
+import Log from "../app/log.js";
 import AssertionFailedError from "../error/assertionFailedError.js";
+
+let log = new Log("Test");
 
 export function Run(name, testFunction) {
 

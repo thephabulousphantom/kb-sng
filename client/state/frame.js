@@ -43,7 +43,7 @@ export default class Frame {
                             continue;
                         }
 
-                        theSame = theSame & existingCommand[property] == command[property];
+                        theSame = theSame & existingCommand[property].toString() == command[property].toString();
                         if (!theSame) {
 
                             break;

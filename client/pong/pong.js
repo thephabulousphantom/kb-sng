@@ -1,5 +1,3 @@
-import log from "../app/log.js";
-
 import App from "../app/app.js";
 import Scene from "../app/scene.js";
 import SceneSplash from "./sceneSplash.js";
@@ -54,9 +52,14 @@ export class PlayerRightDownControl extends DigitalControl {
 
 export class PongApp extends App {
 
-    constructor() {
+    /**
+     * Constructs a PongApp.
+     * 
+     * @param name {String} Name of the app instance, to be used in logging. 
+     */
+    constructor(name = "PongApp") {
 
-        super();
+        super(name);
     }
 
     init() {

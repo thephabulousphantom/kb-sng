@@ -1,4 +1,4 @@
-import log from "./app/log.js";
+import Log from "./app/log.js";
 import * as Pong from "./pong/pong.js";
 import Server from "./network/server.js";
 import ServerConnectionLocal from "./network/serverConnectionLocal.js";
@@ -8,9 +8,9 @@ import Test from "./test/all.js";
 
 function main() {
 
-    log.level = log.severity.debug;
+    Log.level = Log.severity.debug;
 
-    let server = new Server(new Pong.PongApp(), new ServerConnectionLocal());
+    let server = new Server(new Pong.PongApp("ServerApp"), new ServerConnectionLocal());
 
     setTimeout((function(server, client1) {
 
@@ -19,7 +19,7 @@ function main() {
 
     }).bind(undefined, server), 0);
 
-    let client1 = new Client(new Pong.PongApp(), new ClientConnectionLocal());
+    let client1 = new Client(new Pong.PongApp("ClientApp1"), new ClientConnectionLocal());
     client1.app.event.on("Initializing", () => {
         client1.bindControls({
             "$-Key-Space": client1.app.controls.Enter,
@@ -67,7 +67,7 @@ function main() {
 
     }).bind(undefined, server, client1), 100);
 
-    // let client2 = new Client(new Pong.PongApp(), new ClientConnectionLocal());
+    // let client2 = new Client(new Pong.PongApp("ClientApp1"), new ClientConnectionLocal());
     // client2.app.event.on("Initializing", () => {
     //     client2.bindControls({
     //         "$-Key-Enter": client2.app.controls.Enter,
